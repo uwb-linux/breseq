@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Usage Summary &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="next" title="Test Drive" href="test_drive.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_drive.html" title="Test Drive"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="usage-summary">
+<h1>Usage Summary<a class="headerlink" href="#usage-summary" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="breseq">
+<h2><strong class="program">breseq</strong><a class="headerlink" href="#breseq" title="Permalink to this headline">¶</a></h2>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre>breseq -r reference1.gbk [-r reference2.gbk ...] reads1.fastq [reads2.fastq, reads3.fastq...]
+</pre></div>
+</div>
+<p>Run the <strong class="program">breseq</strong> mutation prediction pipeline.</p>
+<p>Required options:</p>
+<dl class="option">
+<dt id="cmdoption-breseq-r">
+<span id="cmdoption-breseq--reference"></span><code class="descname">-r</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--reference</code><code class="descclassname"> &lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-breseq-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input reference genome sequence files in GenBank, GFF3, or FASTA format. If there are multiple reference sequences stored in separate files (e.g., a bacterial genome and a plasmid), this option can be supplied multiple times.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq-arg-reads1">
+<span id="cmdoption-breseq-arg-reads3"></span><code class="descname">reads1</code><code class="descclassname">.fastq [reads2.fastq</code><code class="descclassname">, </code><code class="descname">reads3</code><code class="descclassname">.fastq...]</code><a class="headerlink" href="#cmdoption-breseq-arg-reads1" title="Permalink to this definition">¶</a></dt>
+<dd><p>The remaining arguments at the command line are the FASTQ input files of reads. FASTQ files with base quality scores that are not in <a class="reference external" href="http://en.wikipedia.org/wiki/FASTQ_format">SANGER format</a> will be converted. In addition, reads with &gt;50% N bases will be removed from the converted FASTQ file by default. <strong class="program">breseq</strong> re-calibrates the error rates for each FASTQ file separately, so data sets that were generated independently should be stored in different input files.</p>
+</dd></dl>
+
+<p>Commonly used options:</p>
+<dl class="option">
+<dt id="cmdoption-breseq-h">
+<span id="cmdoption-breseq--help"></span><code class="descname">-h</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-breseq-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce help message showing advanced options.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq-n">
+<span id="cmdoption-breseq--name"></span><code class="descname">-n</code><code class="descclassname"> &lt;string&gt;</code><code class="descclassname">, </code><code class="descname">--name</code><code class="descclassname"> &lt;string&gt;</code><a class="headerlink" href="#cmdoption-breseq-n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human-readable name of the analysis run for output (DEFAULT=&lt;none&gt;).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq-j">
+<span id="cmdoption-breseq--num-processors"></span><code class="descname">-j</code><code class="descclassname"> &lt;int&gt;</code><code class="descclassname">, </code><code class="descname">--num-processors</code><code class="descclassname"> &lt;int&gt;</code><a class="headerlink" href="#cmdoption-breseq-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of processors to use in multithreaded steps (DEFAULT=1).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq--no-junction-prediction">
+<code class="descname">--no-junction-prediction</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-breseq--no-junction-prediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not predict new sequence junctions.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq-p">
+<span id="cmdoption-breseq--predict-polymorphisms"></span><code class="descname">-p</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--predict-polymorphisms</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-breseq-p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict polymorphic (mixed) mutations.</p>
+</dd></dl>
+
+<p>For a complete list of options, please see the command line help (by using the -h option).</p>
+</div>
+<div class="section" id="command-bam2aln">
+<h2>Command: bam2aln<a class="headerlink" href="#command-bam2aln" title="Permalink to this headline">¶</a></h2>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre>breseq BAM2ALN [-b reference.bam -f reference.fasta -o alignment.html -n 200] region1 [region2 region3 ...]
+</pre></div>
+</div>
+<p>Display reads aligned to the specified region or regions.</p>
+<p>Commonly used options:</p>
+<dl class="option">
+<dt id="cmdoption-breseq_bam2aln-b">
+<span id="cmdoption-breseq_bam2aln--bam"></span><code class="descname">-b</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--bam</code><code class="descclassname"> &lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2aln-b" title="Permalink to this definition">¶</a></dt>
+<dd><p>BAM database file of read alignments (DEFAULT=data/reference.bam).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2aln-f">
+<span id="cmdoption-breseq_bam2aln--fasta"></span><code class="descname">-f</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--fasta</code><code class="descclassname"> &lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2aln-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>FASTA file of reference sequences (DEFAULT=data/reference.fasta).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2aln-o">
+<span id="cmdoption-breseq_bam2aln--output"></span><code class="descname">-o</code><code class="descclassname"> &lt;path&gt;</code><code class="descclassname">, </code><code class="descname">--output</code><code class="descclassname"> &lt;path&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2aln-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output path. If there is just one region, the name of the output file (DEFAULT=region1.*). If there are multiple regions, this argument must be a directory path, and all output files will be output here with names region1.*, region2.*, ... (DEFAULT=.).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2aln-r">
+<span id="cmdoption-breseq_bam2aln--region"></span><code class="descname">-r</code><code class="descclassname"> &lt;region&gt;</code><code class="descclassname">, </code><code class="descname">--region</code><code class="descclassname"> &lt;region&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2aln-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regions to create alignments for. Must be provided as sequence regions in the format <strong>ACCESSION:START-END</strong>, where <strong>ACCESSION</strong> is a valid identifier for one of the sequences in the FASTA file, and <strong>START</strong> and <strong>END</strong> are 1-indexed coordinates of the beginning and end positions. Any read overlapping these positions will be shown. A separate output file is created for each region. Regions may be provided at the end of the command line as unnamed arguments.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2aln-n">
+<span id="cmdoption-breseq_bam2aln--max-reads"></span><code class="descname">-n</code><code class="descclassname"> &lt;int&gt;</code><code class="descclassname">, </code><code class="descname">--max-reads</code><code class="descclassname"> &lt;int&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2aln-n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum number of reads that will be aligned to a region. If there are more than this many reads, then the reads displayed are randomly chosen and a warning is added to the output. (DEFAULT=200).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="command-bam2cov">
+<h2>Command: bam2cov<a class="headerlink" href="#command-bam2cov" title="Permalink to this headline">¶</a></h2>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre>breseq BAM2COV [-b reference.bam -f reference.fasta --format PNG -o output.png] region1 [region2 region3 ...]
+</pre></div>
+</div>
+<p>Create a coverage plot or table for the specified region or regions.</p>
+<p>Commonly used options:</p>
+<dl class="option">
+<dt id="cmdoption-breseq_bam2cov-b">
+<span id="cmdoption-breseq_bam2cov--bam"></span><code class="descname">-b</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--bam</code><code class="descclassname"> &lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2cov-b" title="Permalink to this definition">¶</a></dt>
+<dd><p>BAM database file of read alignments (DEFAULT=data/reference.bam).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2cov-f">
+<span id="cmdoption-breseq_bam2cov--fasta"></span><code class="descname">-f</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--fasta</code><code class="descclassname"> &lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2cov-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>FASTA file of reference sequences (DEFAULT=data/reference.fasta).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2cov-o">
+<span id="cmdoption-breseq_bam2cov--output"></span><code class="descname">-o</code><code class="descclassname"> &lt;path&gt;</code><code class="descclassname">, </code><code class="descname">--output</code><code class="descclassname"> &lt;path&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2cov-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output path. If there is just one region, the name of the output file (DEFAULT=region1.*). If there are multiple regions, this argument must be a directory path, and all output files will be output here with names region1.*, region2.*, ... (DEFAULT=.).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2cov-r">
+<span id="cmdoption-breseq_bam2cov--region"></span><code class="descname">-r</code><code class="descclassname"> &lt;region&gt;</code><code class="descclassname">, </code><code class="descname">--region</code><code class="descclassname"> &lt;region&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2cov-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regions to create alignments for. Must be provided as sequence regions in the format <strong>ACCESSION:START-END</strong>, where <strong>ACCESSION</strong> is a valid identifier for one of the sequences in the FASTA file, and <strong>START</strong> and <strong>END</strong> are 1-indexed coordinates of the beginning and end positions. Any read overlapping these positions will be shown. A separate output file is created for each region. Regions may be provided at the end of the command line as unnamed arguments.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2cov--format">
+<code class="descname">--format</code><code class="descclassname"> &lt;PNG/PDF&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2cov--format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format of output plot: PNG or PDF. (DEFAULT=PNG).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2cov-t">
+<span id="cmdoption-breseq_bam2cov--table"></span><code class="descname">-t</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--table</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-breseq_bam2cov-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create tab-delimited file of coverage instead of a plot.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2cov-1">
+<span id="cmdoption-breseq_bam2cov--total-only"></span><code class="descname">-1</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--total-only</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-breseq_bam2cov-1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only plot/tabulate the total coverage at a position. That is, do not not output the coverage on each genomic strand.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-breseq_bam2cov--resolution">
+<code class="descname">--resolution</code><code class="descclassname"> &lt;int&gt;</code><a class="headerlink" href="#cmdoption-breseq_bam2cov--resolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of positions to output coverage information for in interval (0=ALL) (DEFAULT=600).</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Usage Summary</a><ul>
+<li><a class="reference internal" href="#breseq"><strong class="program">breseq</strong></a></li>
+<li><a class="reference internal" href="#command-bam2aln">Command: bam2aln</a></li>
+<li><a class="reference internal" href="#command-bam2cov">Command: bam2cov</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_drive.html"
+                        title="next chapter">Test Drive</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/usage.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_drive.html" title="Test Drive"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gdtools Utility Program &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="next" title="GenomeDiff Format" href="gd_format.html" />
+    <link rel="prev" title="Frequently Asked Questions (FAQ)" href="faq.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="gd_format.html" title="GenomeDiff Format"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="faq.html" title="Frequently Asked Questions (FAQ)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="gdtools-utility-program">
+<span id="genomediff-format"></span><h1><strong class="program">gdtools</strong> Utility Program<a class="headerlink" href="#gdtools-utility-program" title="Permalink to this headline">¶</a></h1>
+<p>Performs various functions on <strong class="program">GenomeDiff</strong> formatted files. Options depend on the COMMAND supplied. Only a small subset of these commands are described below.
+For a full list of <strong class="program">gdtools</strong> subcommands run it from the command line with no options:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">gdtools</span>
+</pre></div>
+</div>
+<div class="section" id="command-annotate-or-compare">
+<h2>Command: ANNOTATE (or COMPARE)<a class="headerlink" href="#command-annotate-or-compare" title="Permalink to this headline">¶</a></h2>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre>gdtools ANNOTATE [-o annotated.html] -r reference.gbk input.1.gd [input.2.gd ... ]
+</pre></div>
+</div>
+<p>Annotate a <strong class="program">GenomeDiff</strong> file with information about mutations (what genes they affect, amino acid substitutions, etc.)
+Default output is to another <strong class="program">GenomeDiff</strong>, but an HTML table can be produced with a table of mutations in a single <strong class="program">GenomeDiff</strong>
+file or to compare the mutations present in several <strong class="program">GenomeDiff</strong> files. This subcommand can be called as ANNOTATE or COMPARE. Both
+have the same effect.</p>
+<dl class="option">
+<dt id="cmdoption-gdtools-ANNOTATE-(or-COMPARE)-r">
+<span id="cmdoption-gdtools-ANNOTATE-(or-COMPARE)--reference"></span><code class="descname">-r</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--reference</code><code class="descclassname">=&lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-gdtools-ANNOTATE-(or-COMPARE)-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reference sequence files (Genbank, GFF, or FASTA). This option may be entered multiple times. REQUIRED</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-gdtools-ANNOTATE-(or-COMPARE)-o">
+<span id="cmdoption-gdtools-ANNOTATE-(or-COMPARE)--output"></span><code class="descname">-o</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--output</code><code class="descclassname">=&lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-gdtools-ANNOTATE-(or-COMPARE)-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>File name for the output|Genome Diff| or HTML. DEFAULT: &#8220;annotated.gd&#8221; or &#8220;annotated.html&#8221;.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-gdtools-ANNOTATE-(or-COMPARE)--html">
+<code class="descname">--html</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-gdtools-ANNOTATE-(or-COMPARE)--html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output an HTML table instead of a <strong class="program">GenomeDiff</strong> file.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt>input1.gd input2.gd ...</dt>
+<dd>Input <strong class="program">GenomeDiff</strong> file(s). This option may be entered multiple times to compare across files. REQUIRED</dd>
+</dl>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Some advanced <strong class="program">GenomeDiff</strong> attributes for mutations, such as <strong>within</strong> and <strong>before</strong>, are ignored when generating compare tables.</p>
+</div>
+</div>
+<div class="section" id="command-apply">
+<h2>Command: APPLY<a class="headerlink" href="#command-apply" title="Permalink to this headline">¶</a></h2>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre>gdtools APPLY [ -o output.gff3 -f GFF3 ] -r reference.gbk input.gd
+</pre></div>
+</div>
+<p>Apply the mutations described in the input <strong class="program">GenomeDiff</strong> to the reference sequence(s).</p>
+<dl class="option">
+<dt id="cmdoption-gdtools-APPLY-r">
+<span id="cmdoption-gdtools-APPLY--reference"></span><code class="descname">-r</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--reference</code><code class="descclassname">=&lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-gdtools-APPLY-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reference sequence files (Genbank, GFF, or FASTA). This option may be entered multiple times. REQUIRED</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-gdtools-APPLY-o">
+<span id="cmdoption-gdtools-APPLY--output"></span><code class="descname">-o</code><code class="descclassname"> &lt;file_path&gt;</code><code class="descclassname">, </code><code class="descname">--output</code><code class="descclassname">=&lt;file_path&gt;</code><a class="headerlink" href="#cmdoption-gdtools-APPLY-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output file containing the muta. DEFAULT: &#8220;output.*&#8221;</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-gdtools-APPLY-f">
+<span id="cmdoption-gdtools-APPLY--format"></span><code class="descname">-f</code><code class="descclassname"> &lt;output_format&gt;</code><code class="descclassname">, </code><code class="descname">--format</code><code class="descclassname">=&lt;output_format&gt;</code><a class="headerlink" href="#cmdoption-gdtools-APPLY-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output format. Possible values are &#8220;fasta&#8221; or &#8220;gff3&#8221;.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt>input.gd</dt>
+<dd>Input <strong class="program">GenomeDiff</strong> file. REQUIRED</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong class="program">gdtools</strong> Utility Program</a><ul>
+<li><a class="reference internal" href="#command-annotate-or-compare">Command: ANNOTATE (or COMPARE)</a></li>
+<li><a class="reference internal" href="#command-apply">Command: APPLY</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="faq.html"
+                        title="previous chapter">Frequently Asked Questions (FAQ)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gd_format.html"
+                        title="next chapter"><strong class="program">GenomeDiff</strong> Format</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/gd_usage.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="gd_format.html" title="GenomeDiff Format"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="faq.html" title="Frequently Asked Questions (FAQ)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="breseq Manual" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="breseq Manual"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p><strong class="program">breseq</strong> (pronounced: \brēz-ˈsēk\ or <em>breeze-seq</em>) is a computational pipeline for the analysis of short-read re-sequencing data (e.g. Illumina, 454, IonTorrent, etc.). It uses reference-based alignment approaches to predict mutations in a sample relative to an already sequenced genome. <strong class="program">breseq</strong> is intended for microbial genomes (&lt;10 Mb) and re-sequenced samples that are only slightly diverged from the reference sequence (&lt;1 mutation per 1000 bp).</p>
+<p><strong class="program">breseq</strong>&#8216;s primary advantages over other software programs are that it can:</p>
+<ol class="arabic simple">
+<li>Accurately predict new sequence junctions, such as those associated with mobile element insertions.</li>
+<li>Integrate multiple sources of evidence for genetic changes into mutation predictions.</li>
+<li>Produce annotated output describing biologically relevant mutational events.</li>
+</ol>
+<p><strong class="program">breseq</strong> was initially developed to analyze data from the Lenski long-term evolution experiment with <em>E. coli</em> <a class="reference external" href="http://myxo.css.msu.edu/ecoli/">(Link to LTEE Website)</a> <a class="reference internal" href="references.html#barrick2009a" id="id1">[Barrick2009a]</a> <a class="reference internal" href="references.html#barrick2009b" id="id2">[Barrick2009b]</a>.</p>
+<p>However, <strong class="program">breseq</strong> may be generally useful to researchers who are:</p>
+<ol class="arabic simple">
+<li>Tracking mutations over time in microbial evolution experiments.</li>
+<li>Checking strains for unwanted second-site mutations after genetic manipulations.</li>
+<li>Identifying mutations that occur during strain improvement or after long-term culture of engineered strains.</li>
+<li>Discovering what mutations arise in pathogens during infection or cause antibiotic resistance.</li>
+</ol>
+<div class="section" id="citing-breseq">
+<h2>Citing <strong class="program">breseq</strong><a class="headerlink" href="#citing-breseq" title="Permalink to this headline">¶</a></h2>
+<p>Please cite the main <strong class="program">breseq</strong> publication if you use this software in your research:</p>
+<ul class="simple">
+<li>Deatherage, D.E., Barrick, J.E. (2014) Identification of mutations in laboratory-evolved microbes from next-generation sequencing data using <em>breseq</em>. <em>Methods Mol. Biol.</em> <strong>1151</strong>: 165–188. <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4239701">Link to Full Text</a></li>
+</ul>
+<p>See the <a class="reference internal" href="methods.html#annotated-bibliography"><span>Annotated bibliography</span></a> for a full list of papers that describe <strong class="program">breseq</strong>. We appreciate you also citing these publications if they are relevant for your application.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#citing-breseq">Citing <strong class="program">breseq</strong></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter"><strong class="program">breseq</strong> Manual</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Installation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/introduction.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="breseq Manual"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

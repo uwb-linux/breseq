@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>breseq Manual &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="#" />
+    <link rel="next" title="Introduction" href="introduction.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="breseq-manual">
+<h1><strong class="program">breseq</strong> Manual<a class="headerlink" href="#breseq-manual" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#citing-breseq">Citing <strong class="program">breseq</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-external-dependencies">Install external dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#method-1-binary-download">Method 1. Binary download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#method-2-source-code-download">Method 2. Source code download</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#installing-in-a-system-wide-location">Installing in a system-wide location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#installing-in-the-source-directory">Installing in the source directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#installing-in-a-custom-location">Installing in a custom location</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#method-3-github-source-code">Method 3. GitHub source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-on-cygwin-windows">Installing on Cygwin (Windows)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting-installation">Troubleshooting installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage Summary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#breseq"><strong class="program">breseq</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#command-bam2aln">Command: bam2aln</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#command-bam2cov">Command: bam2cov</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="test_drive.html">Test Drive</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="test_drive.html#download-data-files">1. Download data files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="test_drive.html#reference-sequence">Reference sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="test_drive.html#read-files">Read files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="test_drive.html#run-breseq">2. Run <strong class="program">breseq</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="test_drive.html#open-breseq-output">3. Open <strong class="program">breseq</strong> output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods.html">Methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#read-mapping">Read mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#new-junction-evidence-jc">New junction evidence (JC)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#identifying-candidate-junctions">Identifying candidate junctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#scoring-and-accepting-junctions">Scoring and accepting junctions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#read-alignment-evidence-ra">Read alignment evidence (RA)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#read-end-trimming">Read end trimming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#base-quality-re-calibration">Base quality re-calibration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#calling-mutations-from-ra-evidence">Calling mutations from RA evidence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#consensus-score-bayesian-snp-caller">Consensus score (Bayesian SNP caller)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#polymorphism-score-mixed-allele-model">Polymorphism score (mixed allele model)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#statistical-filters-for-ra-predictions">Statistical filters for RA predictions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#ra-prediction-options-and-flowcharts">RA prediction options and flowcharts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#unknown-base-evidence-un">Unknown base evidence (UN)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#missing-coverage-evidence-mc">Missing coverage evidence (MC)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#read-coverage-distribution">Read coverage distribution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#seed-and-extend-algorithm">Seed and extend algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#mutation-prediction">Mutation prediction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#base-substitutions">Base substitutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#short-insertions-and-deletions">Short insertions and deletions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#large-deletions">Large deletions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#mobile-element-insertions">Mobile element insertions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#duplications">Duplications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#other-evidence">Other evidence</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#annotated-bibliography">Annotated bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">Output</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="output.html#html-archive">HTML Archive</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="output.html#mutation-display">Mutation Display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="output.html#evidence-display">Evidence Display</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="output.html#processed-data">Processed Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="output.html#viewing-output-aligned-reads-in-the-igv">Viewing Output / Aligned Reads in the IGV</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="acknowledgments.html#developers">Developers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acknowledgments.html#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acknowledgments.html#funding">Funding</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Tutorials:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_clones.html">Tutorial 1: Clonal Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_populations.html">Tutorial 2: Mixed Populations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_barcoded_targeted.html">Tutorial 3: Consensus Reads and Targeted Sequencing</a></li>
+</ul>
+</div>
+<p>Appendices:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gd_usage.html">gdtools Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gd_format.html">Genome Diff Format</a></li>
+</ul>
+</div>
+<p>Documentation last updated January 05, 2019.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="introduction.html"
+                        title="next chapter">Introduction</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

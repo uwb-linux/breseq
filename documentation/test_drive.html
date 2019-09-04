@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Test Drive &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="next" title="Methods" href="methods.html" />
+    <link rel="prev" title="Usage Summary" href="usage.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="methods.html" title="Methods"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="usage.html" title="Usage Summary"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-drive">
+<span id="id1"></span><h1>Test Drive<a class="headerlink" href="#test-drive" title="Permalink to this headline">¶</a></h1>
+<p>In this test drive, we will first download a bacterial genome and FASTQ files of Illumina reads. Then, we will use <strong class="program">breseq</strong> to predict mutations that are present in the re-sequencing data relative to this reference genome.</p>
+<div class="section" id="download-data-files">
+<h2>1. Download data files<a class="headerlink" href="#download-data-files" title="Permalink to this headline">¶</a></h2>
+<p>First, create a directory called <strong>test_drive</strong>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir test_drive
+<span class="nv">$ </span><span class="nb">cd </span>test_drive
+</pre></div>
+</div>
+<div class="section" id="reference-sequence">
+<h3>Reference sequence<a class="headerlink" href="#reference-sequence" title="Permalink to this headline">¶</a></h3>
+<p><strong class="program">breseq</strong> prefers the reference sequence in Genbank or GFF3 format. In this example, the reference sequence is <em>Escherichia coli</em> B strain REL606. The Genbank (Refseq) accession number is: <strong>NC_012967</strong>. You can search for this sequence at <a class="reference external" href="http://www.ncbi.nlm.nih.gov/">http://www.ncbi.nlm.nih.gov/</a> or follow this <a class="reference external" href="http://www.ncbi.nlm.nih.gov/nuccore/NC_012967">direct link</a>.</p>
+<p>Once the sequence is displayed, you will want to select &#8220;Show sequence&#8221; from the Display options on the right then click &#8220;Update View&#8221; and let the sequence download complete. Finally, use the &#8220;Send:&#8221; menu to choose &#8220;Complete Record&#8221; and Destination: &#8220;File&#8221; and &#8220;Genbank (Full)&#8221;. It should start downloading a file called &#8220;sequence.gb&#8221;. Rename this to <strong>NC_012967.gbk</strong> after it downloads.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">A common error in using <strong class="program">breseq</strong> is to download and try to use a GenBank file that does not include the DNA sequence of the genome. Remember to &#8220;Show sequence&#8221; from the Display options on the right then click &#8220;Update View&#8221; before downloading to avoid this problem!</p>
+</div>
+<p>If you open the GenBank file that you downloaded in a text editor, you should see a section with ORIGIN followed by the DNA sequence of the genome, like this:</p>
+<div class="highlight-text"><div class="highlight"><pre>ORIGIN
+              1 agcttttcat tctgactgca acgggcaata tgtctctgtg tggattaaaa aaagagtgtc
+             61 tgatagcagc ttctgaactg gttacctgcc gtgagtaaat taaaatttta ttgacttagg
+            121 tcactaaata ctttaaccaa tataggcata gcgcacagac agataaaaat tacagagtac
+            181 acaacatcca tgaaacgcat tagcaccacc attaccacca ccatcaccat taccacaggt
+            241 aacggtgcgg gctgacgcgt acaggaaaca cagaaaaaag cccgcacctg acagtgcggg
+</pre></div>
+</div>
+</div>
+<div class="section" id="read-files">
+<h3>Read files<a class="headerlink" href="#read-files" title="Permalink to this headline">¶</a></h3>
+<p>We&#8217;re going to use Illumina genome re-sequencing data from a strain that evolved for 20,000 generations in a long-term evolution experiment <a class="reference internal" href="references.html#barrick2009a" id="id2">[Barrick2009a]</a>. This data is available in the European Nucleotide Archive (ENA). Go to <a class="reference external" href="http://www.ebi.ac.uk/">http://www.ebi.ac.uk/</a> and search for the accession number: <strong>SRR030257</strong>. Then click on the accession number to open the record and download the two data files using the links in the &#8216;ftp&#8217; column.</p>
+<p>Move all three of these files into the <strong>test_drive</strong> directory that you created.</p>
+</div>
+</div>
+<div class="section" id="run-breseq">
+<h2>2. Run <strong class="program">breseq</strong><a class="headerlink" href="#run-breseq" title="Permalink to this headline">¶</a></h2>
+<p>Check to be sure that you have changed into the <strong>test_drive</strong> directory and that you have all of the input files (and have uncompressed them).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>ls
+NC_012967.gbk                SRR030257_1.fastq       SRR030257_2.fastq
+</pre></div>
+</div>
+<p>Now, run breseq:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>breseq -r NC_012967.gbk SRR030257_1.fastq SRR030257_2.fastq
+</pre></div>
+</div>
+<p>The first named argument (-r) is the reference sequence. If you had multiple reference sequences, you could input multiple ones (e.g., -r NC_012967.gbk -r plasmid.gbk).</p>
+<p>The unnamed arguments at the end of the command line are the read files. You can input as many as you need and mix FASTQ files from different sequencing technologies (e.g., Illumina and 454).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Running <strong class="program">breseq</strong> on a full data set like this is not fast. Depending on your computer, this could take several hours. To speed things up, you can set -j option to the number of cores on your machine to enable multithreaded execution of some steps (e.g., -j 4 for a quad-core machine). If you want to speed this example up, you might also include only one of the two input read files on the command line.</p>
+</div>
+</div>
+<div class="section" id="open-breseq-output">
+<h2>3. Open <strong class="program">breseq</strong> output<a class="headerlink" href="#open-breseq-output" title="Permalink to this headline">¶</a></h2>
+<p>Open the file <strong>index.html</strong> in the new <strong>output</strong> directory. This describes the predicted mutations and also evidence for mutations that <strong class="program">breseq</strong> could not resolve into mutational events. The tables in this HTML file are more fully described in the section on <a class="reference internal" href="output.html#output-format"><span>Output</span></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Test Drive</a><ul>
+<li><a class="reference internal" href="#download-data-files">1. Download data files</a><ul>
+<li><a class="reference internal" href="#reference-sequence">Reference sequence</a></li>
+<li><a class="reference internal" href="#read-files">Read files</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#run-breseq">2. Run <strong class="program">breseq</strong></a></li>
+<li><a class="reference internal" href="#open-breseq-output">3. Open <strong class="program">breseq</strong> output</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="usage.html"
+                        title="previous chapter">Usage Summary</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="methods.html"
+                        title="next chapter">Methods</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/test_drive.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="methods.html" title="Methods"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="usage.html" title="Usage Summary"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Methods &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="next" title="Output" href="output.html" />
+    <link rel="prev" title="Test Drive" href="test_drive.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="output.html" title="Output"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_drive.html" title="Test Drive"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="methods">
+<h1>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h1>
+<p>This section describes the algorithms used by <strong class="program">breseq</strong>.</p>
+<div class="section" id="read-mapping">
+<span id="id1"></span><h2>Read mapping<a class="headerlink" href="#read-mapping" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">breseq</strong> uses <a class="reference external" href="http://bowtie-bio.sourceforge.net/bowtie2">Bowtie2</a> to map reads to the reference genome sequence:</p>
+<p>Currently, <strong class="program">breseq</strong> does not use the distance contraints available in paired-end or mate-paired libraries during read alignment or as a source of evidence supporting mutations. These data sets are treated as single-end reads.</p>
+<p><strong class="program">breseq</strong> keeps track of two kinds of read alignments:</p>
+<dl class="docutils">
+<dt><cite>unique read matches</cite></dt>
+<dd>Where a read aligns best to only one location in the reference sequence.</dd>
+<dt><cite>repeat read matches</cite></dt>
+<dd>Where a read aligns equivalently to multiple locations in the reference sequence (because the repeats are longer than the read length).</dd>
+</dl>
+<p>For some calculations, <strong class="program">breseq</strong> is concerned with:</p>
+<dl class="docutils">
+<dt><cite>unique-only reference positions</cite></dt>
+<dd>Position in the reference sequence that do not overlap any <em>repeat read matches</em>.</dd>
+</dl>
+</div>
+<div class="section" id="new-junction-evidence-jc">
+<span id="new-junction-evidence"></span><h2>New junction evidence (JC)<a class="headerlink" href="#new-junction-evidence-jc" title="Permalink to this headline">¶</a></h2>
+<p>First, <strong class="program">breseq</strong> searches for mosaic read alignments that may indicate new junctions in the sample between disjoint regions of the reference sequence.</p>
+<div class="section" id="identifying-candidate-junctions">
+<h3>Identifying candidate junctions<a class="headerlink" href="#identifying-candidate-junctions" title="Permalink to this headline">¶</a></h3>
+<p>In a pre-processing step, all read alignments with insertions or deletions of more than 2 bases are split into their constituent sub-alignments. This strategy tends to be more accurate than looking for these types of mutations as <a class="reference internal" href="#read-alignment-evidence"><span>Read alignment evidence (RA)</span></a> because gaps larger than a couple of bp can be problematic for generating accurate and consistent read alignments, especially for indels involving simple sequence repeats.</p>
+<p>Next, for each read that has multiple alignments to the reference, all pairs of  alignments are tested to find cases where:</p>
+<ol class="arabic simple">
+<li>One alignment begins with the first base of the read.</li>
+<li>Both alignments together cover a number of bases in the read that is more than 2 bases longer than the length covered by any other single alignment.</li>
+<li>Both alignments contain at least 5 read bases that do not overlap the other.</li>
+<li>One alignment contains at least 10 read bases that do not overlap the other.</li>
+<li>There are at most 20 bp unique to the read between matches to the reference.</li>
+</ol>
+<p>If a pair of alignments passes this test, <strong class="program">breseq</strong> generates the putative sequence of the new junction from the reference sequence and any intervening base pairs that are unique to the read.</p>
+<p>In cases where the two read alignments overlap because some of its sequence could be assigned to match either location in the reference genome, <strong class="program">breseq</strong> first trims each alignment to remove portions with mismatched bases or indels, then assigns as much of this overlap as possible to the side of the read that maps uniquely to the reference genome, or to the side with the lowest reference coordinate. It considers a location in the reference genome non-unique if it has repeat matches. If <code class="docutils literal"><span class="pre">repeat_region</span></code> annotation exists in the reference genome, then <strong class="program">breseq</strong> prefers to have junctions exactly overlap their boundaries.</p>
+<p>This candidate junction sequence includes as many flanking reference bases on each end as the longest read in the entire data set. (So, if the data set consists of 36-bp reads, and the two read alignments overlapped by five bases, the sequence for this candidate junction would be 36 x 2 – 5 = 67 bases.</p>
+<p>After processing every read in this manner, <strong class="program">breseq</strong> combines all candidate junctions that match the same reference sequence and calculates a &#8220;position-hash&#8221; score. This score is a count of the number of <cite>different</cite> start positions in the reference sequence that are observed among the reads that support a candidate junction. This scoring scheme favors junctions supported by reads that are evenly distributed on each strand of the reference genome and evenly distributed at different positions relative to the junction point. (Pathological junction candidates tend to be supported only by reads that barely overlap the junction and are all on one strand.)</p>
+<p><strong class="program">breseq</strong> sorts all candidate junctions according to this position-hash score, breaking ties with a &#8220;minimum-overlap&#8221; score. This score simply sums, over all reads, the minimum overlap that each read supporting the junction has to either of the two sides of the junction (not counting overlap regions). Top-scoring candidate junctions according to this two-tiered sorting scheme are retained until adding new candidates would cause their cumulative length to exceed 0.1x the total reference sequence length or their total number to exceed 5000.</p>
+</div>
+<div class="section" id="scoring-and-accepting-junctions">
+<h3>Scoring and accepting junctions<a class="headerlink" href="#scoring-and-accepting-junctions" title="Permalink to this headline">¶</a></h3>
+<p>New junctions may also be supported by reads that do not overlap both sides sufficiently to seed alignments during mapping. To include these, <strong class="program">breseq</strong> performs a second alignment step where it maps all reads to the new candidate junction sequences. Then, for each read, it determines whether its best alignment is to a junction candidate or to the reference sequence. For this purpose, alignments are assigned a score that is the number of matched reference bases minus the number of indel positions. Alignments that do not cover at least 28 bases of the read are discarded. Ties are resolved later.</p>
+<p>A position-hash score is calculated again for each candidate junction by counting the number of different start positions that are observed among the reads that map best to that candidate junction. Junctions are tested in order from those with the most best alignments to those with the least or none. Reads that map equally well to the reference and to one or several junctions are included when calculating these position-hash scores.</p>
+<p>Candidate junctions are accepted as evidence for a mutational event if their position-hash score exceeds a specified cutoff according to the value of their neg_log10_pos_hash_p_value field, also known as the &#8220;skew&#8221; score.</p>
+<p>In consensus mode, the skew score is calculated by fitting a censored negative binomial (overdispersed Poisson) distribution to the read-depth coverage at unique-only reference positions as described under <a class="reference internal" href="#read-coverage-distribution"><span>Read coverage distribution</span></a>. <strong class="program">breseq</strong> then calculates the chance that at least one read will start at any given position, on a given strand, at different read-depth coverage levels. The chance of observing the actual position-hash score is then calculated according to the binomial distribution assuming twice the read length number of trials (for each strand), and this chance per trial of observing a read in this register starting at a given position. The negative log10 of this probability is the &#8220;skew&#8221; score. A higher skew means that it was less likely to either observe such a small number of reads or so many reads being highly biased to start at certain positions, both of which would be unlikely for an average position in the genome. With the defaulr settings a junction fails this test when it has a skew of &gt;2.0 (a probability of &lt;0.01 of observing the given position-hash score given the number of aligned reads).</p>
+<p>In polymorphism mode, the skew score is not useful since the true coverage of the variant is only an unknown fraction of the average coverage. Therefore, junctions are assigned skew scores of &#8220;Not Tested&#8221; (NT). Other criteria can be used to rule out unlikely junctions in polymorphism mode.</p>
+<p>In addition to this score, several other criteria are used when deciding whether a predicted junction has sufficient support. The complete list is:</p>
+<ol class="arabic simple">
+<li>Must be supported by reads mapping to both strands of the predicted junction.</li>
+<li>Must have reads mapping to the predicted junction that extend at least 14 base pairs into each side of the reference.</li>
+<li>Must have reads mapping to each strand of the predicted junction that extend into each side of the junction at least 9 bp.</li>
+<li>Must have reads mapping to the predicted junction where the side of the read with the smallest reference overlap extends at least 3 bp into the reference sequence on each side.</li>
+</ol>
+<p>If the junction meets all of these criteria, it will be reported as evidence. In this case, reads that map equally elsewhere (to the reference or a different junction) are assigned to this junction and removed from further consideration. If, after all junction candidates have been tested, a read remains unused, it is assigned to the reference genome.</p>
+<p>For junctions that pass this scoring cutoff, the ends of reads aligning to the junction are re-added as split sub-alignments to the alignment database, resolving ambiguously aligned bases, so that each read base is aligned to only one reference base. These split reads can be recognized in the output because they are renamed with suffixes of -M1 and -M2 for the two portions.</p>
+</div>
+</div>
+<div class="section" id="read-alignment-evidence-ra">
+<span id="read-alignment-evidence"></span><h2>Read alignment evidence (RA)<a class="headerlink" href="#read-alignment-evidence-ra" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">breseq</strong> calls base substitution mutations and small indels by examining the pileup of reads mapped to each position in the reference genome. There are two fundamentally different methods of doing so:</p>
+<ol class="arabic simple">
+<li>CONSENSUS mode is appropriate when re-sequencing a clonal haploid genome. It expects all variant alleles will be present in 100% of the sample. This mode is the default.</li>
+<li>POLYMORPHISM (METAGENOMIC) mode can be used to analyze a mixed population of genomes evolved from a common ancestor. It will predict variants with frequencies between 0% and 100% if a mixture model is well-supported by the read alignment evidence.</li>
+</ol>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Polymorphism prediction is still considered a somewhat experimental feature. It continues to be actively developed.</p>
+</div>
+<div class="section" id="read-end-trimming">
+<h3>Read end trimming<a class="headerlink" href="#read-end-trimming" title="Permalink to this headline">¶</a></h3>
+<p>The ends of alignments of short reads to a reference sequence can be ambiguous with respect to insertion and deletion mutations. <strong class="program">breseq</strong> uses a conservative strategy to ignore these bases when calling mutations.</p>
+<p><strong class="program">breseq</strong> examines the reference sequence for perfect sequence repeats with lengths of 1-18 bases. Then for each position in the reference it determines how many bases must be trimmed from the end of a read beginning or ending at that position until the remaining bases are unambiguously aligned with respect to possible mutations causing changes in sequence repeats of these lengths. The minimum number of bases trimmed at each end of any read is 1, because one can never unambiguously know if another copy of that base was inserted by a mutation.</p>
+<div class="figure align-center" id="id9">
+<a class="reference internal image-reference" href="_images/end_trimming_example.png"><img alt="_images/end_trimming_example.png" src="_images/end_trimming_example.png" style="width: 450px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Example of alignment end trimming.</strong></span></p>
+</div>
+<p>This example shows the number of bases that will be trimmed from the left and right ends of a read if its match to the reference genome begins or ends on that base. (Note that the strand of the genome that the read matches makes no difference!)  The green, blue, and yellow highlight the repeats where the numbers come from for three test cases.</p>
+<p>For green, a read with its left end aligned to this position is not informative with respect to how many AG copies there are in the sequenced genome. Therefore, it is only unambiguously aligned at the bases starting CAT-, and the first four bases will be trimmed. Similarly, a read with its right end aligned to the green position cannot tell how many TA copies there are. It will only be unambiguously aligned through -CTT, and its last four bases will be trimmed.</p>
+<p>Trimming ends in this way enables more accurate mutation predictions because reads extending into these repeats from either side, but not completely crossing them, could otherwise be misinterpreted as evidence <em>against</em> a mutation.</p>
+<p>For example, consider this mutation, which involves insertion of a new AGC at a site where there are already two AGC copies:</p>
+<div class="figure align-center" id="id10">
+<a class="reference internal image-reference" href="_images/missed_mutation_no_trimming.png"><img alt="_images/missed_mutation_no_trimming.png" src="_images/missed_mutation_no_trimming.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Indel mutation prediction aided by end trimming.</strong></span></p>
+</div>
+<p>This image shows reads 1-6 aligned to the reference genome with and without end trimming (lowercase letters in reads). Two reads cross the entire AGCx2 repeat and show that a third AGC has been inserted.</p>
+<p>Without end trimming, two reads on the top strand that do not cross the new AGC insertion, contradict that there was any change to the sequence here when they are aligned to the reference. With end trimming, these bases are ignored because they are ambiguous with respect to possible insertions, like the event that happened, or deletion of one AGC copy.</p>
+</div>
+<div class="section" id="base-quality-re-calibration">
+<span id="id2"></span><h3>Base quality re-calibration<a class="headerlink" href="#base-quality-re-calibration" title="Permalink to this headline">¶</a></h3>
+<p>In the FASTQ input files, each read base has been assigned a quality score by the normal pipeline for a given sequencing technology. Base quality re-calibration using covariates such as identity of the reference base, identity of the mismatch base, base position within the read, and neighboring base identities can significantly improve these error rate estimates <a class="reference internal" href="references.html#mckenna2010" id="id3">[McKenna2010]</a>.</p>
+<p><strong class="program">breseq</strong> uses an empirical error model that is trained by assuming that nearly all of the disagreements between mapped reads and the reference genome are due to sequencing errors and not bona fide differences between the sample and the reference: it simply counts the number of times that each base or a single-base gap is observed in a read opposite each base or a single-base gap. These counts are further binned by the quality score of the read base. (The quality score of the next aligned base in the read is used for single-base deletions). A pseudocount of one is added to counts in all categories, and these error counts are converted to error rates by dividing the count in each cell by the sum across that base quality score.</p>
+<div class="figure align-center" id="id11">
+<a class="reference internal image-reference" href="_images/error_rates.png"><img alt="_images/error_rates.png" src="_images/error_rates.png" style="width: 600px; height: 400px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Example of re-calibrated error rates.</strong></span></p>
+</div>
+<p>This plot shows a typical empirical error model fit to Illumina Genome Analyzer data. Notice that the rate of single-base deletions is much lower than the rate of any base miscall. Base qualities normally do not give information about the rates of indel mutations, and this re-calibration step allows <strong class="program">breseq</strong> to estimate the rates of these sequencing errors.</p>
+<p>Recall that <strong class="program">breseq</strong> requires input in <a class="reference external" href="http://en.wikipedia.org/wiki/FASTQ_format">Sanger FASTQ format</a>. Therefore the expected total error rate (<cite>E</cite>) at a given quality score (<cite>Q</cite>) before re-calibration is:</p>
+<p><img class="math" src="_images/math/e2fb62743652eb64af9d8187c1ccfc1e166af1f6.png" alt="E=10^{-\frac{Q}{10}}"/></p>
+</div>
+<div class="section" id="calling-mutations-from-ra-evidence">
+<span id="mutation-calling-from-ra-evidence"></span><h3>Calling mutations from RA evidence<a class="headerlink" href="#calling-mutations-from-ra-evidence" title="Permalink to this headline">¶</a></h3>
+<p>Both CONSENSUS and POLYMORPHISM mode operate by calculating a &#8216;consensus score&#8217; and a &#8216;polymorphism score&#8217; for each alignment column. In describing how mutation predictions are made in each mode from these scores and additional statistical filters, we first introduce several calculations and concepts. Then, we present a full list of <strong class="program">breseq</strong> command-line options and RA evidence attributes. Finally, we show the flowcharts that determine what  pieces of RA evidence make it into the final HTML output files as &#8220;predicted mutations&#8221; versus being relegated to the &#8220;marginal predictions&#8221; section or being discarded entirely.</p>
+</div>
+<div class="section" id="consensus-score-bayesian-snp-caller">
+<span id="ra-consensus-score"></span><h3>Consensus score (Bayesian SNP caller)<a class="headerlink" href="#consensus-score-bayesian-snp-caller" title="Permalink to this headline">¶</a></h3>
+<p>At each alignment position, <strong class="program">breseq</strong> calculates the Bayesian posterior probability of possible sample bases given the observed read bases. Specifically, it uses a haploid model with five possible base states (A, T, C, G, and a gap), assumes a uniform prior probability of each state, and uses the empirical error model derived during base quality re-calibration to update the prior with each read base observation.</p>
+<p>Thus, at a given alignment position, the log10 ratio of the posterior probability that the sample has a certain base b<sub>x</sub> versus the probability that the sample has a different base is:</p>
+<p><img class="math" src="_images/math/e3ea5c398b6146a3b5285ad1222578dbb31c99b4.png" alt="L(b_x) = \sum\limits_{i=1}^{n}\{\log_{10}[E(b_x, b_i, q_i)] - log_{10}[1 - E(b_x, b_i, q_i)]\}"/></p>
+<p>Where there are n reads aligned to this position, b<sub>i</sub> is the base observed in the ith read, q<sub>i</sub> is the quality of this base, and E is the probability of observing this read base given its quality score at a reference position with base b<sub>x</sub> according to the empirical error model.</p>
+<p><strong class="program">breseq</strong> determines the base with the highest value of L, and records read alignment evidence if this base is different from the reference base. This evidence is assigned log10 L minus the log10 of the cumulative length of all reference sequences as a consensus E-value score for this consensus base prediction.</p>
+<p>Recall that <strong class="program">breseq</strong> will typically only find indels of at most 2 bases as read alignment evidence, because all alignments with longer indels were split in a pre-processing step when predicting <a class="reference internal" href="#new-junction-evidence"><span>New junction evidence (JC)</span></a>.</p>
+</div>
+<div class="section" id="polymorphism-score-mixed-allele-model">
+<span id="ra-polymorphism-score"></span><span id="polymorphism-prediction"></span><h3>Polymorphism score (mixed allele model)<a class="headerlink" href="#polymorphism-score-mixed-allele-model" title="Permalink to this headline">¶</a></h3>
+<p>Next, <strong class="program">breseq</strong> tests the hypothesis that reads aligned to each reference position (and base insertions relative to the reference) support a model that is a mixture of a major and minor mutational variant as opposed to a model that all disagreements with the reference sequence (or consensus change predicted as above) are due to sequencing errors. To do this, it calculates the chances of generating the observed alignment given the hypotheses that the sequenced sample consists of 100% of each of the four bases or a gap character and the per-base error model described above. Then it takes the base states giving the top and second highest probabilites and tests a mixture model that allows the major and minor variants to be present at any intermediate fraction in the sequenced population.</p>
+<p>How this model is specified depends on the mode:</p>
+<ol class="arabic simple">
+<li>In CONSENSUS mode, only the raw frequency predicted from the read counts of the major and variant allele is tested. So if there are</li>
+<li>IN POLYMORPHISM mode, the maximum likelihood allele frequency (taking into account bases observed in the pileup and their quality scores) is found with a precision (at <code class="xref std std-option docutils literal"><span class="pre">--polymorphism-precision</span></code> resolution, DEFAULT = 0.000001).</li>
+</ol>
+<p><strong class="program">breseq</strong> then tests the statistical support for the model having only one reference base in the sequenced sample versus the model with one additional free parameter consisting of mixture of two alleles using a likelihood-ratio test. That is, twice the natural logarithm of the probability of the mixture model divided by the probability of the one-base model is compared to a chi-squared distribution with 1 degree of freedom.</p>
+<p>As for the case of consensus mutation prediction from read alignment evidence, the p-value significance of the likelihood-ratio test is finally converted to a polymorphism E-value score by multiplying by the total number of reference positions.</p>
+</div>
+<div class="section" id="statistical-filters-for-ra-predictions">
+<h3>Statistical filters for RA predictions<a class="headerlink" href="#statistical-filters-for-ra-predictions" title="Permalink to this headline">¶</a></h3>
+<p>The empirical error model described above in <a class="reference internal" href="#base-quality-re-calibration"><span>Base quality re-calibration</span></a> does not capture some second-order sources of variation in error rates that can lead to substantial numbers of false-positive predictions. For example: sequencing error hotspots at certain positions, in certain contexts, and on certain strands. Several levels of additional filters can be used to prevent these types of predictions. In general, the default settings used by <strong class="program">breseq</strong> should yield excellent results in CONSENSUS mode. The performance of POLYMORPHISM mode is much more variable with data from different sequencers, with different levels of coverage, etc. In POLYMORPHISM mode, it maybe beneficial to adjust these filtering settings depending on whether one wants to aggressively filter out these false-positives (at the expense of filtering some true-positives) or try to recover all true-positives (at the possible expense of letting more false-positives through into the output).</p>
+<div class="section" id="strand-bias">
+<h4>Strand bias<a class="headerlink" href="#strand-bias" title="Permalink to this headline">¶</a></h4>
+<p>This bias test uses Fisher&#8217;s Exact Test to calculate a two-sided p-value for the hypothesis that the top/bottom strand distribution of reads supporting the major base is not different from the top/bottom strand distribution of reads supporting the minor base. If the hypothesis is rejected when the p-value is compared to <code class="xref std std-option docutils literal"><span class="pre">--polymorphism-bias-p-value-cutoff</span></code>, then this may indicate that there was a sequencing-error hotspot in reads on one strand that generated a false-positive polymorphism prediction. This type of error happens frequently in data we have examined.</p>
+<p>In practice, most problem predictions of this kind have zero or only a handful of reads on one strand and many reads on the other strand supporting the minor variant. This test can fail to reject false-positive predictions when there is low enough coverage of the minor variant that the test is not significant even if all of the reads supporting it are on one strand. In practice, this situation may be better dealt with by requiring there to be at least one read supporting the minor variant on each strand with <code class="xref std std-option docutils literal"><span class="pre">--polymorphism-coverage-both-strands</span></code>.</p>
+<p>Conversely, if coverage is high there may be so many observations that a statistically significant bias is detected simply because library prep and sequencing is slightly more efficient on one strand due to the different sequence context, even when there is high coverage of all strand/base combinations. Use this option with caution in cases of very high coverage (&gt;1000 reads).</p>
+</div>
+<div class="section" id="quality-score-bias">
+<h4>Quality score bias<a class="headerlink" href="#quality-score-bias" title="Permalink to this headline">¶</a></h4>
+<p>This bias test uses a one-sided Kolmogorov-Smirnov test to test whether base quality scores supporting the minor mutational variants are suspiciously lower than the base quality scores supporting the major variant. The p-value significance of rejecting the null hypothesis by this test is also compared to <code class="xref std std-option docutils literal"><span class="pre">--polymorphism-bias-p-value-cutoff</span></code>.</p>
+</div>
+<div class="section" id="homopolymer-stretches">
+<h4>Homopolymer stretches<a class="headerlink" href="#homopolymer-stretches" title="Permalink to this headline">¶</a></h4>
+<p>Currently, application of the error model in <strong class="program">breseq</strong> on a per-column basis causes overprediction of indel polymorphisms in homopolymer stretches. Why is this the case? If there are 10 A&#8217;s in a row in the reference genome, deleting any one A will cause what looks like the same mutation after the gap is aligned to the rightmost reference position possible. Therefore, the actual chance of observing a deleted A is ten times the value expected from the error model. This discrepancy can make a small number of reads aligned to this position with deletions achieve significance by the likelihood-ratio test. Similar logic applies in the case of base insertions.</p>
+<p>If <strong class="program">breseq</strong> cannot adequately correct for these types of errors, they can be filtered from the output by specifying the <code class="xref std std-option docutils literal"><span class="pre">--polymorphism-reject-homopolymer-length</span></code> option. A value of 5 gives reasonable results for <em>E. coli</em>. Generally, these false predictions also have extremely low frequencies (&lt;2%) for the minor indel variants.</p>
+</div>
+</div>
+<div class="section" id="ra-prediction-options-and-flowcharts">
+<h3>RA prediction options and flowcharts<a class="headerlink" href="#ra-prediction-options-and-flowcharts" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/mutation_calling_settings.png"><img alt="_images/mutation_calling_settings.png" src="_images/mutation_calling_settings.png" style="width: 800px; height: 448px;" /></a>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/consensus_mode_RA_flowchart.png"><img alt="_images/consensus_mode_RA_flowchart.png" src="_images/consensus_mode_RA_flowchart.png" style="width: 600px; height: 572px;" /></a>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/polymorphism_mode_RA_flowchart.png"><img alt="_images/polymorphism_mode_RA_flowchart.png" src="_images/polymorphism_mode_RA_flowchart.png" style="width: 800px; height: 525px;" /></a>
+</div>
+</div>
+</div>
+<div class="section" id="unknown-base-evidence-un">
+<span id="unknown-base-evidence"></span><h2>Unknown base evidence (UN)<a class="headerlink" href="#unknown-base-evidence-un" title="Permalink to this headline">¶</a></h2>
+<p>When there is insufficient evidence to call any base at a reference position, <strong class="program">breseq</strong> reports this base as &#8220;unknown&#8221;. Contiguous stretches of unknown bases are output and shown in the results. Explicitly marking bases as unknown can be useful when analyzing many similar genomes; it allows one to ascertain when a mutation found in certain data sets may have been missed in others due to low coverage and/or poor data quality in a particular sample.</p>
+</div>
+<div class="section" id="missing-coverage-evidence-mc">
+<span id="missing-coverage-evidence"></span><h2>Missing coverage evidence (MC)<a class="headerlink" href="#missing-coverage-evidence-mc" title="Permalink to this headline">¶</a></h2>
+<p>As <strong class="program">breseq</strong> traverses read pileups it predicts deletions when it encounters reference regions with missing and low coverage.</p>
+<div class="section" id="read-coverage-distribution">
+<span id="id4"></span><h3>Read coverage distribution<a class="headerlink" href="#read-coverage-distribution" title="Permalink to this headline">¶</a></h3>
+<p>If read sequences were randomly distributed across the entire reference sequence, then the number of positions with a given depth of read coverage would follow a Poisson distribution. In practice, the actual read coverage depth distribution deviates from this idealized expectation in at least two ways:</p>
+<p>First, it is generally overdispersed relative to a Poisson distribution, e.g., there are more positions with higher and lower coverage than expected. This may represent a bias in the steps used to prepare a DNA fragment library or sequencing differences that cause more reads originating in certain regions of the genome to fail quality filtering steps. This overdispersion occurs even when re-sequencing a known genome. In fact, there is often a fingerprint of coverage bias where specific stretches consistently have higher or lower coverage than average across different instrument runs and DNA sample preps.</p>
+<p>Second, there may be real mutations in the sample that affect the observed coverage distribution, such as large deletions and duplications. Deletions will add weight to the low end of the distribution because they cause reference positions to have zero or very low coverage. Non-zero coverage in true deletions is sometimes present in practice because there may be a small amount of contaminating DNA from a different sample that does not have this deletion or high error rate reads may spuriously map there. Duplications and amplifications will add weight to the distribution at higher coverage values.</p>
+<p>For a normal sample, <strong class="program">breseq</strong> attempts to fit a negative binomial distribution (an overdispersed Poisson distribution) to the read coverage depth observed at unique-only reference positions for each reference sequence (e.g., chromosome). It uses left censored data to mitigate the effects of deleted regions on the overall fit. The threshold for censoring is determined by first finding the read depth with the maximum representaton in the distribution after smoothing using a moving average window size of 5 bases. Positions with coverage less than half this maximal read depth are ignored during fitting.</p>
+<div class="figure align-center" id="id12">
+<a class="reference internal image-reference" href="_images/coverage_distribution.png"><img alt="_images/coverage_distribution.png" src="_images/coverage_distribution.png" style="width: 500px; height: 428px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Example of coverage distributon fit.</strong></span></p>
+</div>
+<p>In this example of real data, circles represent the number of positions in the reference with a given depth of read coverage. Data points that were censored during fitting are shown in red. The solid line is the least-squares best fit of a negative binomial distribution, and the dashed line is the best Poisson fit.</p>
+<p>If a draft genome sequence is used as a reference, it may have short contigs for which this distribution cannot be fit. You should use the <code class="docutils literal"><span class="pre">-c</span></code> option in place of the <code class="docutils literal"><span class="pre">-r</span></code> option for this reference file to notify <strong class="program">breseq</strong> that this is the case so that it will fit the coverage distribution of all reference sequences in that input file together (e.g., as one chromosome).</p>
+<p>It is possible that the fitting procedure will fail for certain highly biased data or when coverage is very low for a certain reference sequence. For example, if you have done a pull-down of only certain regions of a chromosome (like in exon sequencing). In this case, <strong class="program">breseq</strong> will fall back to a rougher estimate of the coverage and cutoffs for calling deletions or it may call the entire reference sequence as deleted (and not call mutations in it). If you are doing targeted sequencing, you should use the <code class="docutils literal"><span class="pre">-t</span></code> option so that <strong class="program">breseq</strong> will call mutations in these sequences no matter what coverage distribution looks like (naturally, deletion mutations will not be called in this case).</p>
+</div>
+<div class="section" id="seed-and-extend-algorithm">
+<h3>Seed and extend algorithm<a class="headerlink" href="#seed-and-extend-algorithm" title="Permalink to this headline">¶</a></h3>
+<p>From the fit coverage distribution, <strong class="program">breseq</strong> calibrates how it will call deletions. Deletion predictions are initiated at every reference position with unique-only coverage of zero. They are extended in each direction and merged until unique coverage exceeds a threshold calculated from the overall coverage distribution for the reference sequence. This cutoff is the the minimum threshold coverage <em>t</em> that satisfies the following relationship:</p>
+<p><img class="math" src="_images/math/3c0f37e6632b9130a9a83d5d3ada58cf731e990c.png" alt="F(t) &gt; 0.05\times\sqrt{L}"/>,</p>
+<p>where <em>F</em> is the negative binomial cumulative distribution function with best-fit mean and size parameters and <em>L</em> is the reference sequence length.</p>
+<p>In some cases there is ambiguity concerning the size of missing coverage regions because they encompass or overlap regions with repeat matches. Even if a specific example of a repetitive region is deleted, there will still appear to be coverage there because exact copies still exist elsewhere in the genome.</p>
+<p><strong class="program">breseq</strong> assumes that any regions with repeat coverage that occur wholly within a region of low unique coverage (defined as above) have been deleted along with those flanking sequences. If a region of repeat coverage overlaps one end of the missing region prediction, then that end is assigned a range of possible reference positions. They reflect the two extreme possibilities that (1) the entire contiguous repetitive region is missing and (2) the entire contiguous repetitive region is still there. To determine the latter boundary, the same  algorithm applied to unique coverage is used on unique coverage plus normalized repeat coverage depth, where normalization means that a repeat match counts as coverage of one divided by the total number of locations in the reference sequence that it matches.</p>
+<div class="figure align-center" id="id13">
+<a class="reference internal image-reference" href="_images/region_coverage_example.png"><img alt="_images/region_coverage_example.png" src="_images/region_coverage_example.png" style="width: 600px; height: 333px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Coverage in a deleted reference region.</strong></span></p>
+</div>
+<p>This example shows a region of missing coverage (white background) that extends into a region of repeat coverage (red line), making the left side end of the missing coverage ambiguous.</p>
+</div>
+</div>
+<div class="section" id="mutation-prediction">
+<h2>Mutation prediction<a class="headerlink" href="#mutation-prediction" title="Permalink to this headline">¶</a></h2>
+<p>The previous sections describe <strong>evidence</strong> for mutations. <strong class="program">breseq</strong> next tries to predict biologicaly relevant <strong>mutational events</strong> from this evidence. These rules are summarized in each section using <a class="reference internal" href="gd_usage.html#genomediff-format"><span>gdtools Utility Program</span></a> abbreviations for types of mutations and evidence.</p>
+<div class="section" id="base-substitutions">
+<h3>Base substitutions<a class="headerlink" href="#base-substitutions" title="Permalink to this headline">¶</a></h3>
+<p><em>RA evidence = SNP or SUB mutation</em></p>
+<p>Base substitution mutations are called from RA evidence. When only a single base is affected, <strong class="program">breseq</strong> calls a base substitution (SNP) mutation. When multiple base substitutions occur adjacent to each other or in conjunction with indels (see below), <strong class="program">breseq</strong> calls a substitution (SUB) mutation.</p>
+</div>
+<div class="section" id="short-insertions-and-deletions">
+<h3>Short insertions and deletions<a class="headerlink" href="#short-insertions-and-deletions" title="Permalink to this headline">¶</a></h3>
+<p><em>RA or JC evidence = INS, DEL, or SUB mutation</em></p>
+<p>For single-base insertions and deletions, RA evidence with gap characters is used to call mutations as in the case of base substitutions. For longer insertions and deletions, for which missing coverage evidence may not exist, these events may be predicted solely on the basis of new junctions joining them.</p>
+</div>
+<div class="section" id="large-deletions">
+<h3>Large deletions<a class="headerlink" href="#large-deletions" title="Permalink to this headline">¶</a></h3>
+<p><em>MC+JC evidence = DEL mutation</em></p>
+<p>Missing coverage typically indicates a large deletion event. When a junction also exists that precisely joins compatible endpoints, <strong class="program">breseq</strong> predicts a deletion (DEL) mutation.</p>
+</div>
+<div class="section" id="mobile-element-insertions">
+<h3>Mobile element insertions<a class="headerlink" href="#mobile-element-insertions" title="Permalink to this headline">¶</a></h3>
+<p><em>JC+JC evidence = MOB mutation</em></p>
+<p>When two junctions exist that would join positions close by in the reference sequence to the ends of an annotated <code class="docutils literal"><span class="pre">repeat_region</span></code>, <strong class="program">breseq</strong> predicts a mobile element insertion (MOB). It further tries to shift the ends of the junctions such that they align best with the ends of the mobile element.</p>
+</div>
+<div class="section" id="duplications">
+<h3>Duplications<a class="headerlink" href="#duplications" title="Permalink to this headline">¶</a></h3>
+<p><em>JC evidence = AMP mutation</em></p>
+<p>If new junction evidence connects a region of the genome to a region upstream on the same strand, then it typically indicates that the intervening bases have been duplicated and <strong class="program">breseq</strong> predicts a duplication. <strong class="program">breseq</strong> currently does not use evidence from changes in read coverage depth to predict copy number, so coverage should be manually examined to verify this class of mutations.</p>
+</div>
+<div class="section" id="other-evidence">
+<h3>Other evidence<a class="headerlink" href="#other-evidence" title="Permalink to this headline">¶</a></h3>
+<p>&#8220;Orphan&#8221; evidence that passed scoring thresholds but is not assigned by <strong class="program">breseq</strong> to any of the mutational events above is shown in a separate section of the output so that it can be manually examined. <strong class="program">breseq</strong> also displays some &#8220;marginal&#8221; evidence that fails the established cutoffs, but stil has some support, on a separate results page.</p>
+</div>
+</div>
+<div class="section" id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<p>Even given perfect data, <strong class="program">breseq</strong> cannot find some types of mutations:</p>
+<dl class="docutils">
+<dt><cite>Novel sequences, not existing in the reference</cite></dt>
+<dd>Because <strong class="program">breseq</strong> maps reads to  reference sequences, it will not find entirely novel sequences that have been inserted into the genome or novel extrachromosomal DNA fragments such as plasmids. Reads that do not map to the reference genome are dumped to an output file suitable for de novo assembly, so that they can be examined with other software programs.</dd>
+<dt><cite>Mutations in repeat regions</cite></dt>
+<dd>In genomic regions where the only mapped reads also match equally well to other locations in the genome, it is not possible to call mutations. This is an inherent limitation of short-read data. These regions are reported as &#8216;UN&#8217; evidence, so that the user can distinguish where in the genome there was not sufficient coverage of uniquely mapped reads to call mutations.</dd>
+<dt><cite>Chromosomal inversions and rearrangements through repeat sequences</cite></dt>
+<dd>These types of mutations cannot be detected when they involve sequence repeats on the order of the read length. Reads that span repeats and uniquely align in the reference sequence on each end are necessary. <strong class="program">breseq</strong> currently does not take advantage of mate-paired or paired-end information.</dd>
+</dl>
+</div>
+<div class="section" id="annotated-bibliography">
+<span id="id5"></span><h2>Annotated bibliography<a class="headerlink" href="#annotated-bibliography" title="Permalink to this headline">¶</a></h2>
+<p>More information about the methods used by <strong class="program">breseq</strong> is available in these publications:</p>
+<ul class="simple">
+<li>Barrick, J.E., Yu, D.S., Yoon, S.H., Jeong, H, Oh, T.K., Schneider, D., Lenski, R.E., and Kim, J.F. (2009) Genome evolution and adaptation in a long-term experiment with <em>Escherichia coli</em>. <em>Nature</em> <strong>461</strong>:1243-1247. <strong>Methods used by an early version of breseq are described in the supplemental materials.</strong> <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/19838166">Link to Pubmed</a></li>
+<li>Barrick, J.E., Lenski, R.E. (2009) Genome-wide mutational diversity in an evolving population of <em>Escherichia coli</em>. <em>Cold Spring Harb. Symp. Quant. Biol.</em> <strong>74</strong>:119-129. <strong>Early description of polymorphism mode for single-nucleotide variants and small indels.</strong> <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2890043">Link to Full Text</a></li>
+<li>Deatherage, D.E., Barrick, J.E. (2014) Identification of mutations in laboratory-evolved microbes from next-generation sequencing data using <em>breseq</em>. <em>Methods Mol. Biol.</em> <strong>1151</strong>: 165–188. <strong>Tutorial and practical guide to running breseq and interpreting the output.</strong> <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4239701">Link to Full Text</a></li>
+<li>Barrick, J.E., Colburn, G., Deatherage D.E., Traverse, C.C., Strand, M.D., Borges, J.J., Knoester, D.B., Reba, A., Meyer, A.G.(2014) Identifying structural variation in haploid microbial genomes from short-read resequencing data using <em>breseq</em>. <em>BMC Genomics</em> <strong>15</strong>:1039. <strong>Detailed description of methods used to predict structural variation.</strong> <a class="reference external" href="http://www.biomedcentral.com/1471-2164/15/1039">Link to Full Text</a></li>
+<li>Deatherage, D.E., Traverse, C.C., Wolf, L.N., Barrick, J.E. (2015) Detecting rare structural variation in evolving microbial populations from new sequence junctions using <em>breseq</em>. <em>Front. Genet.</em> <strong>5</strong>:468. <strong>Detailed description of methods used to predict polymorphic structural variation.</strong> <a class="reference external" href="http://http://journal.frontiersin.org/article/10.3389/fgene.2014.00468">Link to Full Text</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Methods</a><ul>
+<li><a class="reference internal" href="#read-mapping">Read mapping</a></li>
+<li><a class="reference internal" href="#new-junction-evidence-jc">New junction evidence (JC)</a><ul>
+<li><a class="reference internal" href="#identifying-candidate-junctions">Identifying candidate junctions</a></li>
+<li><a class="reference internal" href="#scoring-and-accepting-junctions">Scoring and accepting junctions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#read-alignment-evidence-ra">Read alignment evidence (RA)</a><ul>
+<li><a class="reference internal" href="#read-end-trimming">Read end trimming</a></li>
+<li><a class="reference internal" href="#base-quality-re-calibration">Base quality re-calibration</a></li>
+<li><a class="reference internal" href="#calling-mutations-from-ra-evidence">Calling mutations from RA evidence</a></li>
+<li><a class="reference internal" href="#consensus-score-bayesian-snp-caller">Consensus score (Bayesian SNP caller)</a></li>
+<li><a class="reference internal" href="#polymorphism-score-mixed-allele-model">Polymorphism score (mixed allele model)</a></li>
+<li><a class="reference internal" href="#statistical-filters-for-ra-predictions">Statistical filters for RA predictions</a><ul>
+<li><a class="reference internal" href="#strand-bias">Strand bias</a></li>
+<li><a class="reference internal" href="#quality-score-bias">Quality score bias</a></li>
+<li><a class="reference internal" href="#homopolymer-stretches">Homopolymer stretches</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ra-prediction-options-and-flowcharts">RA prediction options and flowcharts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#unknown-base-evidence-un">Unknown base evidence (UN)</a></li>
+<li><a class="reference internal" href="#missing-coverage-evidence-mc">Missing coverage evidence (MC)</a><ul>
+<li><a class="reference internal" href="#read-coverage-distribution">Read coverage distribution</a></li>
+<li><a class="reference internal" href="#seed-and-extend-algorithm">Seed and extend algorithm</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mutation-prediction">Mutation prediction</a><ul>
+<li><a class="reference internal" href="#base-substitutions">Base substitutions</a></li>
+<li><a class="reference internal" href="#short-insertions-and-deletions">Short insertions and deletions</a></li>
+<li><a class="reference internal" href="#large-deletions">Large deletions</a></li>
+<li><a class="reference internal" href="#mobile-element-insertions">Mobile element insertions</a></li>
+<li><a class="reference internal" href="#duplications">Duplications</a></li>
+<li><a class="reference internal" href="#other-evidence">Other evidence</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#limitations">Limitations</a></li>
+<li><a class="reference internal" href="#annotated-bibliography">Annotated bibliography</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_drive.html"
+                        title="previous chapter">Test Drive</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="output.html"
+                        title="next chapter">Output</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/methods.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="output.html" title="Output"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_drive.html" title="Test Drive"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

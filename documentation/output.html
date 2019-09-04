@@ -1,0 +1,390 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Output &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="next" title="References" href="references.html" />
+    <link rel="prev" title="Methods" href="methods.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="references.html" title="References"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="methods.html" title="Methods"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="output">
+<span id="output-format"></span><h1>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="html-archive">
+<h2>HTML Archive<a class="headerlink" href="#html-archive" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">breseq</strong> produces results as a stand-alone HTML archive in the output directory. You can load these files directly in a browser, or copy the directory to a server to allow access via the web.</p>
+<p>Important files include:</p>
+<dl class="docutils">
+<dt><cite>output/index.html</cite></dt>
+<dd>The main results page. It consists of an upper table showing predicted mutational events and possibly several other tables showing high-quality &#8220;orphan&#8221; evidence that <strong class="program">breseq</strong> was unable to assign to mutational events. The format of each row varies depending on the type of mutation, as described in <a class="reference internal" href="#mutation-display"><span>Mutation Display</span></a> and <a class="reference internal" href="#evidence-display"><span>Evidence Display</span></a>.</dd>
+<dt><cite>output/marginal.html</cite></dt>
+<dd>Result page showing evidence for mutations with marginal support. Specifically: (1) RA evidence that supports a mutated base or indel more than the reference sequence, but without sufficient support to pass the cutoff threshold, and (2) JC evidence for a set number of the highest scoring junctions that do not pass all test criteria. The format of these tables is described in <a class="reference internal" href="#evidence-display"><span>Evidence Display</span></a>.</dd>
+<dt><cite>output/summary.html</cite></dt>
+<dd>Additional information about the read files, reference sequences, analysis settings, and results. Links to plots showing the re-calibrated base error model, coverage distribution for each reference sequence, and coverage across each reference sequence.</dd>
+<dt><cite>output/output.gd</cite></dt>
+<dd>Text file of evidence and mutation predictions in computer-readable <a class="reference internal" href="gd_usage.html#genomediff-format"><span>gdtools Utility Program</span></a>. This file can be used as input to certain analysis programs to compare mutations found in different samples.</dd>
+<dt><cite>output/log.txt</cite></dt>
+<dd>The original command line used to invoke <strong class="program">breseq</strong>.</dd>
+</dl>
+<div class="section" id="mutation-display">
+<span id="id1"></span><h3>Mutation Display<a class="headerlink" href="#mutation-display" title="Permalink to this headline">¶</a></h3>
+<p>Each row displays a predicted mutation in the re-sequenced sample relative to the reference. Examples showing how the format varies depending on the type of mutation are provided in the following sections.</p>
+<p>Column descriptions:</p>
+<dl class="docutils">
+<dt><cite>evidence</cite></dt>
+<dd>Links to the types of evidence that support this particular prediction. See <a class="reference internal" href="#evidence-display"><span>Evidence Display</span></a>.</dd>
+<dt><cite>seq id</cite></dt>
+<dd>The identifier for the reference sequence with the mutation. This column will not be shown for mutations if there is only one reference sequence.</dd>
+<dt><cite>position</cite></dt>
+<dd>Position in the reference sequence of the mutation. Generally this is where the mutation begins when the mutation affects a range of positions.</dd>
+<dt><cite>mutation</cite></dt>
+<dd>Description of the mutation. Typically describes how nucleotides are added, substituted, or deleted. May also refer to a mobile element in the genome and how it is inserted at the specified position.</dd>
+<dt><cite>annotation</cite></dt>
+<dd>Description of the mutation. For base substitutions inside genes, shows the resulting amino acid and codon changes. For other mutations inside genes, gives the local coordinates of the nucleotides affected. For mutations in intergenic regions, gives two relative positions (e.g., +150/-119) where the numbers are the distances from the mutation to the nearest neighboring genes before and after it in the genome, and the +/- signs indicate whether the mutation is oriented upstream or downstream with respect to each of these genes.</dd>
+<dt><cite>gene</cite></dt>
+<dd>Gene or genes affected by the mutation. May be a single gene, an intergenic region (gene1/gene2), a range that covers several genes (gene1–geneN). Brackets around a [gene] in a range mean that the mutation begins or ends within that gene.</dd>
+<dt><cite>description</cite></dt>
+<dd>Descriptions of the genes affected by the mutation. Generally these correspond to the genes in the gene column, but if many genes are affected, this field is abbreviated to a list of all affected gene names.</dd>
+</dl>
+<p>All gene information is taken from input GenBank files. How informative descriptions are about the effects of mutations is entirely dependent on the quality of annotation in the reference sequence files.</p>
+<div class="section" id="single-base-substitution-snp">
+<h4>Single-base substitution (SNP)<a class="headerlink" href="#single-base-substitution-snp" title="Permalink to this headline">¶</a></h4>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/snp_1.png"><img alt="_images/snp_1.png" src="_images/snp_1.png" style="width: 750px;" /></a>
+</div>
+<p>Replacement of the reference T at position 70,867 with a C inside the <em>araA</em> gene. This mutation changes the 92nd codon of <em>araA</em> from GAC to GGC, causing an aspartic acid (D) to glycine (G) substitution in the encoded protein. The base change in the codon is the reverse-complement of the base change in the genome because this gene is encoded on the bottom strand of the reference sequence.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/snp_2.png"><img alt="_images/snp_2.png" src="_images/snp_2.png" style="width: 750px;" /></a>
+</div>
+<p>Replacement of the reference T at position 1,298,712 with a G in the intergenic region between the <em>ychE</em> and <em>oppA</em> genes. The mutation is downstream of <em>ychE</em> by 674 bases (because this gene is before it in position and on the top strand of the reference) and upstream of <em>oppA</em> by 64 bases (because this gene is after it in position and also on the top strand of the genome).</p>
+</div>
+<div class="section" id="multiple-base-substitution-sub">
+<h4>Multiple-base substitution (SUB)<a class="headerlink" href="#multiple-base-substitution-sub" title="Permalink to this headline">¶</a></h4>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/sub_1.png"><img alt="_images/sub_1.png" src="_images/sub_1.png" style="width: 750px;" /></a>
+</div>
+<p>Replacement of two adjacent reference bases at positions 47,977 and 47,978 with AC in an intergenic region. This mutation is near the end of the genome, so there is no gene after it. It is downstream of <em>lambdap79</em> by 33 bases (because this gene is before it in position and on the top reference strand).</p>
+</div>
+<div class="section" id="insertion-ins">
+<h4>Insertion (INS)<a class="headerlink" href="#insertion-ins" title="Permalink to this headline">¶</a></h4>
+<p>For insertion mutations, new bases are added after the specified <em>position</em>.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/ins_1.png"><img alt="_images/ins_1.png" src="_images/ins_1.png" style="width: 750px;" /></a>
+</div>
+<p>Insertion of a G after reference position 3,893,551. This mutation is 6 nucleotides downstream of <em>kup</em> and 50 nucleotides upstream of <em>insJ-5</em>.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/ins_2.png"><img alt="_images/ins_2.png" src="_images/ins_2.png" style="width: 750px;" /></a>
+</div>
+<p>Insertion of CC after reference position 3,290,071 inside the <em>gltB</em> gene. This mutation occurs after the 205th base of the 4554-base open reading frame of this gene.</p>
+</div>
+<div class="section" id="deletion-del">
+<h4>Deletion (DEL)<a class="headerlink" href="#deletion-del" title="Permalink to this headline">¶</a></h4>
+<p>For deletion rows, the <em>position</em> column gives the first missing reference base and the <em>mutation</em> column gives the size of the deletion. Thus, the deleted reference region extends from <em>position</em> to <em>position</em> + <em>size</em> -1.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/del_1.png"><img alt="_images/del_1.png" src="_images/del_1.png" style="width: 750px;" /></a>
+</div>
+<p>A 6,934-base deletion starting at position 3,894,997. The <em>annotation</em> column reports that it is IS150-mediated, because this repetitive element occurs on one margin of the deletion. This deletion begins before the <em>rbsD</em> gene and ends within the <em>yieO</em> gene. This mutation is supported by <a class="reference internal" href="#new-junction-display"><span>New Junction (JC)</span></a> and <a class="reference internal" href="#missing-coverage-display"><span>Missing coverage (MC)</span></a> evidence.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/del_2.png"><img alt="_images/del_2.png" src="_images/del_2.png" style="width: 750px;" /></a>
+</div>
+<p>A single-base deletion at position 1,332,148 in an intergenic region. The deleted nucleotide is located 131 bp downstream of the <em>topA</em> gene and 79 bp upstream of the <em>cysB</em> gene. This mutation is supported by <a class="reference internal" href="#read-alignment-display"><span>Read alignment (RA)</span></a>.</p>
+</div>
+<div class="section" id="mobile-element-insertion-mob">
+<h4>Mobile element insertion (MOB)<a class="headerlink" href="#mobile-element-insertion-mob" title="Permalink to this headline">¶</a></h4>
+<p>Mobile element insertions can result in duplications of the target site. The provided <em>position</em> is the first of such possibly duplicated bases. The number of bases in parentheses in the <em>annotation</em>, e.g. (+7) bp, are duplicated, starting with the indicated <em>position</em>, so that they now occur before and after the new copy of the mobile element. Additional bases may be added or deleted as a result of the mobile element insertion at either end. These are indicated outside of double colons (::) on the affected side of the mobile element name in the <em>annotation</em> column. The strand of the newly inserted mobile element is indicated in parentheses after its name.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/mob_1.png"><img alt="_images/mob_1.png" src="_images/mob_1.png" style="width: 750px;" /></a>
+</div>
+<p>Insertion of an IS<em>3</em> element in the reverse orientation. Bases 3,571,196 through 3,571,198 are duplicated, so that they now occur on each margin of the newly inserted element. In addition, the sequence TCA was added directly after the IS<em>3</em> element on the right margin. The duplicated bases are positions 397 through 399 of the 435-base <em>uspA</em> reading frame.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/mob_2.png"><img alt="_images/mob_2.png" src="_images/mob_2.png" style="width: 750px;" /></a>
+</div>
+<p>Insertion of an IS<em>186</em> element in the forward orientation. Bases 4,524,522 through 4,524,527 are duplicated, so that they now occur on each margin of the newly inserted element. These bases are 494 through 499 of the 549-base <em>fimA</em> reading frame.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/mob_3.png"><img alt="_images/mob_3.png" src="_images/mob_3.png" style="width: 750px;" /></a>
+</div>
+<p>Insertion of an IS<em>186</em> element in the forward orientation. Bases 2,736,667 through 2,736,675 are duplicated, so that they now occur on each margin of the newly inserted element. Two bases of the mobile element on the left margin were lost, apparently during insertion. The duplicated bases are 818 through 826 of the 1425-base <em>ascB</em> reading frame.</p>
+</div>
+<div class="section" id="sequence-amplification-amp">
+<h4>Sequence amplification (AMP)<a class="headerlink" href="#sequence-amplification-amp" title="Permalink to this headline">¶</a></h4>
+<p>For duplications and other tandem amplifications, <em>position</em> indicates the first repeated base.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/amp_1.png"><img alt="_images/amp_1.png" src="_images/amp_1.png" style="width: 750px;" /></a>
+</div>
+<p>Duplication of 8 bp inside the <em>pykF</em> gene. The bases 1,733,290 to 1,733,297 now appear twice at this location. This mutation would cause a frameshift.</p>
+</div>
+</div>
+<div class="section" id="evidence-display">
+<span id="id2"></span><h3>Evidence Display<a class="headerlink" href="#evidence-display" title="Permalink to this headline">¶</a></h3>
+<p>Evidence is shown in tables with different fields from mutation predictions, that provide more detailed information about support for genomic changes. Clicking on any evidence link for a mutation prediction will also bring up pages with tables showing all items of evidence that <strong class="program">breseq</strong> used to predict the mutational event.</p>
+<div class="section" id="new-junction-jc">
+<span id="new-junction-display"></span><h4>New Junction (JC)<a class="headerlink" href="#new-junction-jc" title="Permalink to this headline">¶</a></h4>
+<p>Each JC row consists of two sub-rows, one describing one side of the junction in the reference sequence. If a sub-row is highlighted in orange, it means that side of the junction ambiguously maps to more than one place in the reference. In this case, the coordinate shown is an example of one site.</p>
+<p>Column descriptions:</p>
+<dl class="docutils">
+<dt><cite>* link</cite></dt>
+<dd>Links to a results page showing the sequence of the new junction as the reference and all reads aligned to the junction.</dd>
+<dt><cite>? links</cite></dt>
+<dd>Links to a results pages for each side of the juncton, that show the reference sequence at that site and any reads that aligned better to this original sequence than to the new junction.  Note that in some cases (such as tandem duplications), it is possible for both the new and old junction sequences to exist in the sample. You can check for this by examining these read alignments. Sequences where the read name has a -M1 or -M2 appended are reads that mapped better to the new junction.</dd>
+<dt><cite>seq id</cite></dt>
+<dd>Identifiers for the reference sequences involved in the new junction.</dd>
+<dt><cite>position</cite></dt>
+<dd>Positions in the reference sequence of the two sides of the new junction. Each position has an equals sign (=) before or after it that represents how the junction was constructed. The reference sequence approaches that coordinate from the side with the equals sign. The displayed coordinates are juxtaposed with each other to make the new junction.</dd>
+</dl>
+<dl class="docutils">
+<dt><cite>reads</cite></dt>
+<dd>The total number of reads that map to this junction.</dd>
+<dt><cite>score</cite></dt>
+<dd>The position-hash score for the junction in <strong>&lt;bold angle brackets&gt;</strong> and the minimum-overlap score on the next line.</dd>
+<dt><cite>annotation, gene, product</cite></dt>
+<dd>Description of the effects of this change on each side of the junction. The format of these columns is the same as in <a class="reference internal" href="#mutation-display"><span>Mutation Display</span></a>.</dd>
+</dl>
+<p>Examples:</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/jc_1.png"><img alt="_images/jc_1.png" src="_images/jc_1.png" style="width: 750px;" /></a>
+</div>
+<p>This image shows the page from clicking on the * link for this junction. A partial alignment of reads to the new junction is shown. Notice the two joined pieces of the reference sequence at the top that they align to. This sequence is on the bottom strand of the reference if start is greater than end.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/jc_2.png"><img alt="_images/jc_2.png" src="_images/jc_2.png" style="width: 750px;" /></a>
+</div>
+<p>This image shows the page from clicking on one of the ? links for this junction. Notice that only a piece of the reads maps to this region and that it ends where these reads begin matching a disjoint region in the reference genome. Clearly the old junction is not supported by any reads in this sample and must no longer exist. Once again, only a partial alignment is shown.</p>
+</div>
+<div class="section" id="read-alignment-ra">
+<span id="read-alignment-display"></span><h4>Read alignment (RA)<a class="headerlink" href="#read-alignment-ra" title="Permalink to this headline">¶</a></h4>
+<p>Column descriptions:</p>
+<dl class="docutils">
+<dt><cite>* link</cite></dt>
+<dd>Links to a results page showing the alignment of reads to this position.</dd>
+<dt><cite>seq id</cite></dt>
+<dd>Identifier for the reference sequence where the change is located.</dd>
+<dt><cite>position</cite></dt>
+<dd>Position in the reference sequence of the single base substitution, insertion, or deletion. It consists of two parts. The first is the reference position, the second is an &#8220;insert count&#8221; that - if greater than zero - indicates this is in a column of the alignment that does not exist in the reference sequence (i.e., it is an insertion relative to the reference and is this many columns past the specified reference position.).</dd>
+<dt><cite>change</cite></dt>
+<dd>The base change, deletion, or insertion.</dd>
+<dt><cite>freq</cite></dt>
+<dd>Frequency of this base change in the sample. <strong class="program">breseq</strong> currently only predicts mutations of 0% or 100% frequency.</dd>
+<dt><cite>score</cite></dt>
+<dd>The base-10 logarithm ratio of the posterior probability that this position in the sample is the called base to the probability that it is any other base,  minus the base-10 logarithm of the total number of positions in all reference sequences. The higher the score, the more evidence for the mutation.</dd>
+<dt><cite>cov</cite></dt>
+<dd>The number of reads overlapping the mutation. Note that portions of reads that are not aligned (lowercase bases with a white background), ends of reads that have been trimmed because alignments their may be ambiguous (lowercase bases with a colored background), and read positions with very low base quality scores that typically indicate sequencing errors (highlighted in yellow) are not counted in this coverage number.</dd>
+<dt><cite>annotation, gene, product</cite></dt>
+<dd>Description of the change&#8217;s effects for each side of the junction. The format of these columns is the same as in <a class="reference internal" href="#mutation-display"><span>Mutation Display</span></a>.</dd>
+</dl>
+<p>Example:</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/ra_1.png"><img alt="_images/ra_1.png" src="_images/ra_1.png" style="width: 750px;" /></a>
+</div>
+<p>Partial alignment of reads showing that most support a base substitution. The &gt; and &lt; for each named read indicate the strand of the reference sequence that it matched (top and bottom, respectively).</p>
+</div>
+<div class="section" id="missing-coverage-mc">
+<span id="missing-coverage-display"></span><h4>Missing coverage (MC)<a class="headerlink" href="#missing-coverage-mc" title="Permalink to this headline">¶</a></h4>
+<p>Column descriptions:</p>
+<dl class="docutils">
+<dt><cite>* links</cite></dt>
+<dd>Links to results pages showing the alignment of reads to the left and right margins of the region with missing coverage.</dd>
+<dt><cite>÷ link</cite></dt>
+<dd>Link to the results page showing a plot of the read coverage in the region of the msising coverage.</dd>
+<dt><cite>seq id</cite></dt>
+<dd>Identifier for the reference sequence where the change is located.</dd>
+<dt><cite>start, end, size</cite></dt>
+<dd>The start and end reference positions and size of the missing coverage. May indicate a range of positions when one end of the missing coverage is in a repeat region.</dd>
+<dt><cite>← cov</cite></dt>
+<dd>Unique read coverage depth on the left margin of the region of missing coverage. Coverage at the last position outside the region is shown followed by coverage at the first position inside the region of missing coverage in brackets.</dd>
+<dt><cite>→ cov</cite></dt>
+<dd>Unique read coverage depth on the right margin of the region of missing coverage. Coverage at the last position inside the region is shown followed by coverage at the first position outside the region.</dd>
+<dt><cite>gene, description</cite></dt>
+<dd>Description of the change&#8217;s effects for each side of the junction. The format of these columns is the same as in <a class="reference internal" href="#mutation-display"><span>Mutation Display</span></a>.</dd>
+</dl>
+<p>Example:</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/mc_1.png"><img alt="_images/mc_1.png" src="_images/mc_1.png" style="width: 750px;" /></a>
+</div>
+<p>Read coverage depth around the missing coverage. The white area shows the maximal boundaries of the predicted range.</p>
+<p>The graphed lines are labeled &#8220;unique&#8221; for reads with only one best match to the reference genome and &#8220;repeat&#8221; for multiple equally good matches to repeat sequences (which are down-weighted by how many matches they have, i.e. a read matching three places contributes 1/3 to the coverage depth at each matched site). Within each type coverage is graphed separately for reads mapping to the &#8220;top&#8221; and &#8220;bottom&#8221; strands of the reference sequence (i.e., forward and reverse complement matches) to aid in detecting artifacts, and these sum to the &#8220;total&#8221; coverage value.</p>
+</div>
+</div>
+</div>
+<div class="section" id="processed-data">
+<h2>Processed Data<a class="headerlink" href="#processed-data" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">breseq</strong> outputs several files that can be used by other software programs to further analyze the final processed read data.</p>
+<dl class="docutils">
+<dt><cite>data/reference.bam, data/reference.bam.bai</cite></dt>
+<dd>The BAM (Binary SAM) formatted database of read alignments to the reference and its index. Along with the <em>reference.fasta*</em> files can be used with any <strong class="program">SAMtools</strong> compatible program.</dd>
+<dt><cite>data/reference.fasta, data/reference.fasta.fai</cite></dt>
+<dd>File of all reference sequences and the corresponding index. Along with the <em>reference.fasta*</em> files can be used with any <strong class="program">SAMtools</strong> compatible program.</dd>
+<dt><cite>data/&lt;read_file&gt;.unmatched.fastq</cite></dt>
+<dd>These files contain reads from each original file that were not mapped to the reference sequences. This file can be used for de novo assembly to predict if there are novel sequences in the sample.</dd>
+</dl>
+</div>
+<div class="section" id="viewing-output-aligned-reads-in-the-igv">
+<span id="viewing-in-igv"></span><h2>Viewing Output / Aligned Reads in the IGV<a class="headerlink" href="#viewing-output-aligned-reads-in-the-igv" title="Permalink to this headline">¶</a></h2>
+<p>You can visualize the &#8220;raw data&#8221; (how <strong class="program">breseq</strong> aligned reads to the reference genome) using the <a class="reference external" href="http://www.broadinstitute.org/igv/">Integrative Genomics Viewer (IGV)</a> and files located in the <code class="file docutils literal"><span class="pre">data</span></code> folder created by <strong class="program">breseq</strong>.</p>
+<ol class="arabic simple">
+<li>Install and open IGV</li>
+<li>Import the reference genome sequence:</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>Click &#8216;File&#8217;, and then &#8216;Import Genome...&#8217;</li>
+<li>Fill out the requested information: &#8216;ID&#8217;, &#8216;Name&#8217;</li>
+<li>Choose the FASTA file: <code class="file docutils literal"><span class="pre">data/reference.fasta</span></code>.</li>
+<li>The other fields are optional.</li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li>Import the reference genome feature information:</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>Click &#8216;File&#8217;, and then &#8216;Load from File...&#8221;</li>
+<li>Choose the GFF3 file: <code class="file docutils literal"><span class="pre">data/reference.gff3</span></code>.</li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li>Import the read alignments to the reference genome:</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>Click &#8216;File&#8217;, and then &#8216;Load from File...&#8221;</li>
+<li>Choose the BAM file: <code class="file docutils literal"><span class="pre">data/reference.bam</span></code>.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Output</a><ul>
+<li><a class="reference internal" href="#html-archive">HTML Archive</a><ul>
+<li><a class="reference internal" href="#mutation-display">Mutation Display</a><ul>
+<li><a class="reference internal" href="#single-base-substitution-snp">Single-base substitution (SNP)</a></li>
+<li><a class="reference internal" href="#multiple-base-substitution-sub">Multiple-base substitution (SUB)</a></li>
+<li><a class="reference internal" href="#insertion-ins">Insertion (INS)</a></li>
+<li><a class="reference internal" href="#deletion-del">Deletion (DEL)</a></li>
+<li><a class="reference internal" href="#mobile-element-insertion-mob">Mobile element insertion (MOB)</a></li>
+<li><a class="reference internal" href="#sequence-amplification-amp">Sequence amplification (AMP)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#evidence-display">Evidence Display</a><ul>
+<li><a class="reference internal" href="#new-junction-jc">New Junction (JC)</a></li>
+<li><a class="reference internal" href="#read-alignment-ra">Read alignment (RA)</a></li>
+<li><a class="reference internal" href="#missing-coverage-mc">Missing coverage (MC)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#processed-data">Processed Data</a></li>
+<li><a class="reference internal" href="#viewing-output-aligned-reads-in-the-igv">Viewing Output / Aligned Reads in the IGV</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="methods.html"
+                        title="previous chapter">Methods</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="references.html"
+                        title="next chapter">References</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/output.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="references.html" title="References"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="methods.html" title="Methods"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,25 @@
+Reference Sequence Formats
+=============================
+
+This appendix explains how |breseq| handles different reference sequence formats. Specifically, where the properties of different annotations are read in, how they are internally classified, and how they may be converted.
+
+Illegal Characters
+--------------------
+
+For all sequence formats:
+
+#. In nucleotide sequences, all characters are converted to uppercase and all non [ATCG] characters are converted to [N].
+#. In gene names and locus tags, the characters [,;/|] are replaced with [_].
+#. In gene descriptions, the character [|] is replaced with [;].
+
+
+
+Types
+---------------------
+
+|breseq| does special handling of repeat sequences for predicting transposon insertions. These must have a type of
+
+Repeats
+repeat_region, mobile_element
+
+CDS, tRNA

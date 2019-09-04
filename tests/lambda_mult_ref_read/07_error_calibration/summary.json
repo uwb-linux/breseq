@@ -1,0 +1,62 @@
+{
+  "NC_001416-0": {
+    "average": 36.37791,
+    "deletion_coverage_propagation_cutoff": 9.0,
+    "deletion_coverage_seed_cutoff": 0.0,
+    "dispersion": 3.568721,
+    "nbinom_dispersion": 3.06130710379447,
+    "nbinom_mean_parameter": 35.25738,
+    "nbinom_prob_parameter": 0.326657851072997,
+    "nbinom_size_parameter": 17.10438,
+    "nbinom_variance": 107.933667855181,
+    "variance": 129.8226
+  },
+  "NC_001416-1": {
+    "average": 35.87216,
+    "deletion_coverage_propagation_cutoff": 8.0,
+    "deletion_coverage_seed_cutoff": 0.0,
+    "dispersion": 3.928637,
+    "nbinom_dispersion": 3.93895530553237,
+    "nbinom_mean_parameter": 36.15494,
+    "nbinom_prob_parameter": 0.253874421625316,
+    "nbinom_size_parameter": 12.30197,
+    "nbinom_variance": 142.412692734204,
+    "variance": 140.9287
+  },
+  "NC_001416-2": {
+    "average": 39.5349,
+    "deletion_coverage_propagation_cutoff": 12.0,
+    "deletion_coverage_seed_cutoff": 0.0,
+    "dispersion": 4.743216,
+    "nbinom_dispersion": 3.40611740609046,
+    "nbinom_mean_parameter": 42.85413,
+    "nbinom_prob_parameter": 0.293589410104275,
+    "nbinom_size_parameter": 17.81049,
+    "nbinom_variance": 145.966198115863,
+    "variance": 187.5226
+  },
+  "NC_001416-3": {
+    "average": 49.38853,
+    "deletion_coverage_propagation_cutoff": 16.0,
+    "deletion_coverage_seed_cutoff": 0.0,
+    "dispersion": 3.982176,
+    "nbinom_dispersion": 3.44219824606268,
+    "nbinom_mean_parameter": 50.23255,
+    "nbinom_prob_parameter": 0.290512029963364,
+    "nbinom_size_parameter": 20.56858,
+    "nbinom_variance": 172.910395505256,
+    "variance": 196.6738
+  },
+  "NC_001416-4": {
+    "average": 47.49711,
+    "deletion_coverage_propagation_cutoff": 12.0,
+    "deletion_coverage_seed_cutoff": 0.0,
+    "dispersion": 3.927506,
+    "nbinom_dispersion": 4.49229426947991,
+    "nbinom_mean_parameter": 48.1125,
+    "nbinom_prob_parameter": 0.222603404855705,
+    "nbinom_size_parameter": 13.77676,
+    "nbinom_variance": 216.135508040352,
+    "variance": 186.5452
+  }
+}

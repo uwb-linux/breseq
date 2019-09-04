@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Frequently Asked Questions (FAQ) &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="next" title="gdtools Utility Program" href="gd_usage.html" />
+    <link rel="prev" title="Tutorial: Ultra-rare variant detection using consensus reads and targeted sequencing" href="tutorial_barcoded_targeted.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="gd_usage.html" title="gdtools Utility Program"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_barcoded_targeted.html" title="Tutorial: Ultra-rare variant detection using consensus reads and targeted sequencing"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="frequently-asked-questions-faq">
+<h1>Frequently Asked Questions (FAQ)<a class="headerlink" href="#frequently-asked-questions-faq" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#does-breseq-use-paired-end-or-mate-paired-information" id="id1">Does <strong class="program">breseq</strong> use paired-end or mate-paired information?</a></li>
+<li><a class="reference internal" href="#why-do-mutations-have-a-predicted-frequency-of-100-when-i-see-a-mixture-in-the-read-pileup" id="id2">Why do mutations have a predicted frequency of 100% when I see a mixture in the read pileup?</a></li>
+<li><a class="reference internal" href="#why-am-i-seeing-a-lot-of-junction-jc-predictions-and-no-mobile-element-mob-mutations" id="id3">Why am I seeing a lot of junction (JC) predictions and no mobile element (MOB) mutations?</a></li>
+</ul>
+</div>
+<div class="section" id="does-breseq-use-paired-end-or-mate-paired-information">
+<h2><a class="toc-backref" href="#id1">Does <strong class="program">breseq</strong> use paired-end or mate-paired information?</a><a class="headerlink" href="#does-breseq-use-paired-end-or-mate-paired-information" title="Permalink to this headline">¶</a></h2>
+<p>Short answer: No.</p>
+<p>Your reads are mapped in single-end mode even if you are using paired-end or mate-paired data.
+For most microbial genomes, you don&#8217;t gain much sensitivity (in terms of the number of reference positions at
+which there are enough uniquely-mapped reads to call mutations) by doing paired read mapping. Furthermore,
+the split-read analysis approach that  <strong class="program">breseq</strong> uses to discover new sequence junctions is more precise
+(finding exact sequence breakpoints) and generally at least as sensitive as predicting structural variation by
+examining read pairs that are mapped with anomalous orientations and insert sizes.</p>
+<p>That said, there are definitely cases where this information can be useful, especially if one has data with
+large insert sizes (e.g. an Illumina mate paired library. So, we hope to include some of this functionality
+in the future. It just hasn&#8217;t been a very high priority.</p>
+</div>
+<div class="section" id="why-do-mutations-have-a-predicted-frequency-of-100-when-i-see-a-mixture-in-the-read-pileup">
+<h2><a class="toc-backref" href="#id2">Why do mutations have a predicted frequency of 100% when I see a mixture in the read pileup?</a><a class="headerlink" href="#why-do-mutations-have-a-predicted-frequency-of-100-when-i-see-a-mixture-in-the-read-pileup" title="Permalink to this headline">¶</a></h2>
+<p>By default, <strong class="program">breseq</strong> is run in <strong>consensus mode</strong> in which it assumes you have a pure clonal
+sample of a haploid genome. It therefore uses a statistical model that will only predict 0%
+or 100% for the frequency of each mutation on the main results page. For SNPs and small indels,
+it <em>does</em> test a very conservative mixed model that allows intermediate frequencies. If
+this model is a better fit to the data, then the mutation will be demoted to the <strong>marginal prediction</strong>
+page because <strong class="program">breseq</strong> assumes that it is some kind of artifact in your sample (a sequencing error
+hotspot or due to your sample actually being a mixture of two different clones, for example).</p>
+<p>When <strong class="program">breseq</strong> is run in <strong>polymorphism mode</strong> (by supplying the <strong>&#8211;polymorphism-prediction|-p</strong> option)
+it uses a statistical approach that finds the maximum likelihood best frequency over the entire range 0-100%.
+If the prediction of a polymorphism fails some filtering steps (controlled by options) than it is rejected as a
+polymorphism and changed to a consensus prediction with 0% or 100% frequency.</p>
+</div>
+<div class="section" id="why-am-i-seeing-a-lot-of-junction-jc-predictions-and-no-mobile-element-mob-mutations">
+<h2><a class="toc-backref" href="#id3">Why am I seeing a lot of junction (JC) predictions and no mobile element (MOB) mutations?</a><a class="headerlink" href="#why-am-i-seeing-a-lot-of-junction-jc-predictions-and-no-mobile-element-mob-mutations" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">breseq</strong> needs to recognize how mobile elements (such as bacterial insertion sequences) are annotated in the
+reference genome file. The syntax for doing this is less standardized than it is for annotating genes, but <strong class="program">breseq</strong>
+tries to be flexible. For predicting MOB mutations, it will use any annotation item with a major type
+of <code class="docutils literal"><span class="pre">repeat_region</span></code> or <code class="docutils literal"><span class="pre">mobile_element</span></code>. To determine the name of the mobile element, it will look for a sub-tag in
+this annotation item matching: <code class="docutils literal"><span class="pre">label</span></code>, <code class="docutils literal"><span class="pre">note</span></code>, <code class="docutils literal"><span class="pre">mobile_element</span></code>, <code class="docutils literal"><span class="pre">mobile_element_type</span></code>, or <code class="docutils literal"><span class="pre">rpt_family</span></code>. For
+proper predictions of MOBs by matching together JC predictions, all elements in the same family should have the same name.</p>
+<p>For example, here are two common ways that IS elements are annotated in GenBank files. Both are recognized by <strong class="program">breseq</strong>.</p>
+<div class="highlight-text"><div class="highlight"><pre>repeat_region   15387..16731
+                /mobile_element=&quot;insertion sequence:IS186A&quot;
+
+mobile_element  321573..322809
+                /mobile_element_type=&quot;insertion sequence:IS1236&quot;
+</pre></div>
+</div>
+<p>If you find another common way that mobile elements are annotated in your input files, feel free to add a feature
+request on GitHub for <strong class="program">breseq</strong> to recognize this format.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Frequently Asked Questions (FAQ)</a><ul>
+<li><a class="reference internal" href="#does-breseq-use-paired-end-or-mate-paired-information">Does <strong class="program">breseq</strong> use paired-end or mate-paired information?</a></li>
+<li><a class="reference internal" href="#why-do-mutations-have-a-predicted-frequency-of-100-when-i-see-a-mixture-in-the-read-pileup">Why do mutations have a predicted frequency of 100% when I see a mixture in the read pileup?</a></li>
+<li><a class="reference internal" href="#why-am-i-seeing-a-lot-of-junction-jc-predictions-and-no-mobile-element-mob-mutations">Why am I seeing a lot of junction (JC) predictions and no mobile element (MOB) mutations?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial_barcoded_targeted.html"
+                        title="previous chapter">Tutorial: Ultra-rare variant detection using consensus reads and targeted sequencing</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gd_usage.html"
+                        title="next chapter"><strong class="program">gdtools</strong> Utility Program</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/faq.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="gd_usage.html" title="gdtools Utility Program"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_barcoded_targeted.html" title="Tutorial: Ultra-rare variant detection using consensus reads and targeted sequencing"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

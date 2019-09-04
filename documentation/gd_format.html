@@ -1,0 +1,717 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GenomeDiff Format &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="prev" title="gdtools Utility Program" href="gd_usage.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="gd_usage.html" title="gdtools Utility Program"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="genomediff-format">
+<span id="genomediff-usage"></span><h1><strong class="program">GenomeDiff</strong> Format<a class="headerlink" href="#genomediff-format" title="Permalink to this headline">¶</a></h1>
+<p>The <strong class="program">GenomeDiff</strong> file format describes mutational differences between a reference DNA sequence and a sample. It may also include evidence from computational analysis or experiments that supports mutations.</p>
+<p>An example of a portion of a <strong class="program">GenomeDiff</strong> file:</p>
+<div class="highlight-python"><div class="highlight"><pre>#=GENOME_DIFF 1.0
+DEL  61      11      NC_001416       139     1
+INS  62      12      NC_001416       14266   G
+SNP  63      13      NC_001416       20661   G
+INS  64      14      NC_001416       20835   C
+SNP  65      15      NC_001416       21714   A
+DEL  60      33,1    NC_001416       21738   5996
+SNP  66      35      NC_001416       31016   C
+...
+MC   9               NC_001416       1       2       0       0       left_inside_cov=0       left_outside_cov=NA     right_inside_cov=0      right_outside_cov=169
+RA   11              NC_001416       139     0       G       .       frequency=1     new_cov=34/40   quality=309.0   ref_cov=0/0     tot_cov=34/40
+JC   2               NC_001416       5491    1       NC_001416       30255   1       0       alignment_overlap=4     coverage_minus=8        coverage_plus=0 flanking_left=35        flanking_right=35       key=NC_001416__5491__1__NC_001416__30251__1__4____35__35__0__0  max_left=30     max_left_minus=30       max_left_plus=0 max_min_left=0  max_min_left_minus=0    max_min_left_plus=0     max_min_right=11        max_min_right_minus=11  max_min_right_plus=0    max_right=11    max_right_minus=11      max_right_plus=0        min_overlap_score=44    pos_hash_score=7        reject=NJ,COV   side_1_annotate_key=gene        side_1_overlap=4        side_1_redundant=0      side_2_annotate_key=gene        side_2_overlap=0        side_2_redundant=0      total_non_overlap_reads=8       total_reads=8
+JC   3               NC_001416       13180   1       NC_001416       13218   1       0       alignment_overlap=4     coverage_minus=1        coverage_plus=0 flanking_left=35        flanking_right=35       key=NC_001416__13180__1__NC_001416__13214__1__4____35__35__0__0 max_left=17     max_left_minus=17       max_left_plus=0 max_min_left=0  max_min_left_minus=0    max_min_left_plus=0     max_min_right=14        max_min_right_minus=14  max_min_right_plus=0    max_right=14    max_right_minus=14      max_right_plus=0        min_overlap_score=14    pos_hash_score=1        reject=NJ,COV   side_1_annotate_key=gene        side_1_overlap=4        side_1_redundant=0      side_2_annotate_key=gene        side_2_overlap=0        side_2_redundant=0      total_non_overlap_reads=1       total_reads=1
+RA   12              NC_001416       14266   1       .       G       frequency=1     new_cov=44/31   quality=186.3   ref_cov=0/0     tot_cov=44/31
+JC   5               NC_001416       14869   -1      NC_001416       15609   -1      0       alignment_overlap=7     coverage_minus=1        coverage_plus=0 flanking_left=35        flanking_right=35       key=NC_001416__14869__0__NC_001416__15616__0__7____35__35__0__0 max_left=21     max_left_minus=21       max_left_plus=0 max_min_left=0  max_min_left_minus=0    max_min_left_plus=0     max_min_right=7 max_min_right_minus=7   max_min_right_plus=0    max_right=7     max_right_minus=7       max_right_plus=0        min_overlap_score=7     pos_hash_score=1        reject=NJ,COV   side_1_annotate_key=gene        side_1_overlap=7        side_1_redundant=0      side_2_annotate_key=gene        side_2_overlap=0        side_2_redundant=0      total_non_overlap_reads=1       total_reads=1
+</pre></div>
+</div>
+<div class="section" id="format-specification">
+<h2>Format specification<a class="headerlink" href="#format-specification" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="version-line">
+<h3>Version line<a class="headerlink" href="#version-line" title="Permalink to this headline">¶</a></h3>
+<p>The first line of the file must define that this is a <strong class="program">GenomeDiff</strong> file and the version of the file specification used:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#=GENOME_DIFF 1.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="metadata-lines">
+<h3>Metadata lines<a class="headerlink" href="#metadata-lines" title="Permalink to this headline">¶</a></h3>
+<p>Lines beginning with <strong>#=&lt;name&gt; &lt;value&gt;</strong> are interpreted as metadata. (Thus, the first line is assigning a metadata item named GENOME_DIFF a value of 1.0.) Names cannot include whitespace characters. Values may include whitespace characters. Lines with the same name are concatenated with single spaces added between them.</p>
+</div>
+<div class="section" id="comment-lines">
+<h3>Comment lines<a class="headerlink" href="#comment-lines" title="Permalink to this headline">¶</a></h3>
+<p>Lines beginning with whitespace and # are comments. Comments may not occur at the end of a data line.</p>
+</div>
+<div class="section" id="data-lines">
+<h3>Data lines<a class="headerlink" href="#data-lines" title="Permalink to this headline">¶</a></h3>
+<p>Data lines describe either a mutation or evidence from an analysis that can potentially support a mutational event. Data fields are tab-delimited. Each line begins with several fields containing information common to all types, continues with a fixed number of type-specific fields, and ends with an arbitrary number of name=value pairs that store optional information.</p>
+<ol class="arabic">
+<li><p class="first"><strong>type</strong> <em>&lt;string&gt;</em></p>
+<p>type of the entry on this line.</p>
+</li>
+<li><p class="first"><strong>id or evidence-id</strong> <em>&lt;uint32&gt;</em></p>
+<p>For evidence and validation lines, the id of this item. For mutation lines, the ids of all evidence or validation items that support this mutation. May be set to &#8216;.&#8217; if a line was manually edited.</p>
+</li>
+<li><p class="first"><strong>parent-ids</strong> <em>&lt;uint32&gt;</em></p>
+<p>ids of evidence that support this mutation. May be set to &#8216;.&#8217; or left blank.</p>
+</li>
+</ol>
+<p><em>mutation</em> types are 3 letters: SNP, SUB, DEL, INS, MOB, AMP, CON, INV.</p>
+<p><em>evidence</em> types are 2 letters: RA, MC, JC, UN.</p>
+<p><em>validation</em> types are 4 letters: TSEQ, PFLP, RFLP, PFGE, PHYL, CURA.</p>
+</div>
+<div class="section" id="mutational-event-types">
+<h3>Mutational Event Types<a class="headerlink" href="#mutational-event-types" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="snp-base-substitution-mutation">
+<h4>SNP: Base substitution mutation<a class="headerlink" href="#snp-base-substitution-mutation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment of base to replace.</p>
+</li>
+<li><p class="first"><strong>new_seq</strong> <em>&lt;char&gt;</em></p>
+<p>new base at position.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="sub-multiple-base-substitution-mutation">
+<h4>SUB: Multiple base substitution mutation<a class="headerlink" href="#sub-multiple-base-substitution-mutation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in the reference sequence of the first base that will be replaced.</p>
+</li>
+<li><p class="first"><strong>size</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases <em>after</em> the specified reference position to replace with <strong>new_seq</strong>.</p>
+</li>
+<li><p class="first"><strong>new_seq</strong> <em>&lt;string&gt;</em></p>
+<p>new bases to substitute.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="del-deletion-mutation">
+<h4>DEL: Deletion mutation<a class="headerlink" href="#del-deletion-mutation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment of first deleted base.</p>
+</li>
+<li><p class="first"><strong>size</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases deleted in reference.</p>
+</li>
+</ol>
+<div class="section" id="additional-del-named-fields">
+<h5>Additional DEL named fields<a class="headerlink" href="#additional-del-named-fields" title="Permalink to this headline">¶</a></h5>
+<ul>
+<li><dl class="first docutils">
+<dt><strong>mediated=</strong><em>&lt;mobile_element_family&gt;</em></dt>
+<dd><p class="first last">This deletion appears to be mediated by a molecular event involving a mobile element such as a transposon. A copy of the mobile element is found on the boundary of the deleted region and a new junction at the opposite end of the deletion matches the end of the mobile element.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>between=</strong><em>&lt;repeat_family&gt;</em></dt>
+<dd><p class="first last">This deletion appears to result from homologous recombination or polymerase slipping between two existing copies of the same genomic repeat (e.g. tRNA, IS element) in the genome. One copy of the repeat is deleted by this event.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>repeat_seq=</strong><em>&lt;string&gt;</em>, <strong>repeat_length=</strong><em>&lt;uint32&gt;</em>, <strong>repeat_ref_num=</strong><em>&lt;uint32&gt;</em>, <strong>repeat_new_copies=</strong><em>&lt;uint32&gt;</em></dt>
+<dd><p class="first last">This deletion is in a short sequence repeat consisting of tandem copies of <strong>repeat_seq</strong> repeated <strong>repeat_ref_num</strong> times in the ancestor and <strong>repeat_new_copies</strong> after a mutation.  To be annotated in this way the copy of the repeat in the reference genome must consist of at least two repeat copies and have a length of five of more total bases (<strong>repeat_length</strong> × <strong>repeat_ref_num</strong> ≥ 5).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="ins-insertion-mutation">
+<h4>INS: Insertion mutation<a class="headerlink" href="#ins-insertion-mutation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment. New bases are inserted <em>after</em> this position.</p>
+</li>
+<li><p class="first"><strong>new_seq</strong> <em>&lt;string&gt;</em></p>
+<p>new bases to be inserted in the reference.</p>
+</li>
+</ol>
+<div class="section" id="additional-ins-named-fields">
+<h5>Additional INS named fields<a class="headerlink" href="#additional-ins-named-fields" title="Permalink to this headline">¶</a></h5>
+<ul>
+<li><dl class="first docutils">
+<dt><strong>repeat_seq=</strong><em>&lt;string&gt;</em>, <strong>repeat_length=</strong><em>&lt;uint32&gt;</em>, <strong>repeat_ref_num=</strong><em>&lt;uint32&gt;</em>, <strong>repeat_new_copies=</strong><em>&lt;uint32&gt;</em></dt>
+<dd><p class="first last">This insertion is in a short sequence repeat consisting of tandem copies of <strong>repeat_seq</strong> repeated <strong>repeat_ref_num</strong> times in the ancestor and <strong>repeat_new_copies</strong> after a mutation.  To be annotated in this way the copy of the repeat in the reference genome must consist of at least two repeat copies and have a length of five of more total bases (<strong>repeat_length</strong> × <strong>repeat_ref_num</strong> ≥ 5).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>insert_position=</strong><em>&lt;uint32&gt;</em></dt>
+<dd><p class="first last">Used when there are multiple insertion events after the same reference base to order the insertions. This typically happens in polymorphism mode and when manually breaking up an insertion of bases into distinct mutational events when this is supported by phylogenetic information. Numbering of insert positions begins with 1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="mob-mobile-element-insertion-mutation">
+<h4>MOB: Mobile element insertion mutation<a class="headerlink" href="#mob-mobile-element-insertion-mutation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment of the first duplicated base at the target site.</p>
+</li>
+<li><p class="first"><strong>repeat_name</strong> <em>&lt;string&gt;</em></p>
+<p>name of the mobile element. Should correspond to an annotated <strong>repeat_region</strong> or <strong>mobile_element</strong> feature in the reference sequence.</p>
+</li>
+<li><p class="first"><strong>strand</strong> <em>&lt;1/-1&gt;</em></p>
+<p>strand of mobile element insertion.</p>
+</li>
+<li><p class="first"><strong>duplication_size</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of target site bases duplicated during insertion of the mobile element, beginning with the specified reference position. If the value of this field is negative, then it indicates that the absolute value of this number of bases were deleted at the target site beginning with the specified position. If the value of this field is zero, then the there were no duplicated bases, and the mobile element was inserted after the specified base position.</p>
+</li>
+</ol>
+<div class="section" id="additional-mob-named-fields">
+<h5>Additional MOB named fields<a class="headerlink" href="#additional-mob-named-fields" title="Permalink to this headline">¶</a></h5>
+<ul>
+<li><dl class="first docutils">
+<dt><strong>del_start=</strong><em>&lt;uint32&gt;</em>, <strong>del_end=</strong><em>&lt;uint32&gt;</em></dt>
+<dd><p class="first last">Delete this many bases from the start or end of the inserted mobile element. This deletion occurs with respect to the top strand of the genome after the element is flipped to the orientation with which it will be inserted.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>ins_start=</strong><em>&lt;string&gt;</em>, <strong>ins_end=</strong><em>&lt;string&gt;</em></dt>
+<dd><p class="first last">Append the specified bases to the start or end of the inserted mobile element. These insertions occur after any deletions and will be inside of any duplicated target site bases.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>mob_region</strong>=<em>&lt;seq_id:start-end &gt;</em></dt>
+<dd><p class="first last">Use the existing copy of the mobile element specified as a seq_id:start-end region to apply this mutation. Useful when different annotated members of a mobile element family have slightly different sequences.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="amp-amplification-mutation">
+<h4>AMP: Amplification mutation<a class="headerlink" href="#amp-amplification-mutation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment.</p>
+</li>
+<li><p class="first"><strong>size</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases duplicated starting with the specified reference position.</p>
+</li>
+<li><p class="first"><strong>new_copy_number</strong> <em>&lt;uint32&gt;</em></p>
+<p>new number of copies of specified bases.</p>
+</li>
+</ol>
+<div class="section" id="additional-amp-named-fields">
+<h5>Additional AMP named fields<a class="headerlink" href="#additional-amp-named-fields" title="Permalink to this headline">¶</a></h5>
+<ul>
+<li><dl class="first docutils">
+<dt><strong>between=</strong><em>&lt;repeat_family&gt;</em></dt>
+<dd><p class="first last">This deletion appears to result from homologous recombination or polymerase slipping between two existing copies of the same genomic repeat (e.g. tRNA, IS element) in the genome. This repeat appears on the boundary of each copy of the specified region.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>mediated=</strong><em>&lt;repeat_family&gt;</em>, <em>mediated_strand=*</em><em>&lt;1/-1&gt;</em></dt>
+<dd><p class="first last">This amplification is mediated by a simultaneous new insertion of a mobile element (or other  repeat element). New copies of the inserted element are added in the specified strand orientation between each new copy of the amplified region. Both of these attributes must be specified for the mutation.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>mob_region</strong>=<em>&lt;seq_id:start-end &gt;</em></dt>
+<dd><p class="first last">Only valid for &#8216;mediated&#8217; amplifications. Use the existing copy of the mobile element specified as a seq_id:start-end region to apply this mutation. Useful when different annotated members of a mobile element family have slightly different sequences.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="con-gene-conversion-mutation">
+<h4>CON: Gene conversion mutation<a class="headerlink" href="#con-gene-conversion-mutation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment that was the target of gene conversion from another genomic location.</p>
+</li>
+<li><p class="first"><strong>size</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases to replace in the reference genome beginning at the specified position.</p>
+</li>
+<li><p class="first"><strong>region</strong> <em>&lt;sequence:start-end&gt;</em></p>
+<p>Region in the reference genome to use as a replacement.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="inv-inversion-mutation">
+<h4>INV: Inversion mutation<a class="headerlink" href="#inv-inversion-mutation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment.</p>
+</li>
+<li><p class="first"><strong>size</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases in inverted region beginning at the specified reference position.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="standard-name-value-pairs">
+<h3>Standard name=value pairs<a class="headerlink" href="#standard-name-value-pairs" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="counting-mutations">
+<h4>Counting Mutations<a class="headerlink" href="#counting-mutations" title="Permalink to this headline">¶</a></h4>
+<p>These attributes affect how molecular events in a <strong class="program">GenomeDiff</strong> are counted for summary purposes. They can be properties of any mutation entry.</p>
+<ul>
+<li><p class="first"><strong>adjacent</strong>=<em>&lt;repeat_family&gt;</em></p>
+<blockquote>
+<div><p>This mutation is adjacent to the specified element. For example, it may be an insertion of a base next to a mobile element. One may want to ignore mutations in this category for certain analyses because they may represent hotspots with atypical mutation rates.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>with</strong>=<em>&lt;mutation_id&gt;</em></p>
+<blockquote>
+<div><p>This mutation should not be counted separately. It should be counted as a <strong>single</strong> molecular event with the other specified mutation (which does not need a with tag)</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="applying-mutations">
+<h4>Applying Mutations<a class="headerlink" href="#applying-mutations" title="Permalink to this headline">¶</a></h4>
+<p>These advanced attributes control how mutations are applied when using <strong class="program">gdtools APPLY</strong> to build a new reference genome from the original reference genome and a <strong class="program">GenomeDiff</strong> and when building phylogenetic trees from multiple samples. They are not generated automatically by <strong class="program">breseq</strong>.</p>
+<ul>
+<li><p class="first"><strong>before</strong>=<em>&lt;mutation_id&gt;</em></p>
+<blockquote>
+<div><p>Apply this mutation before another mutation. For example, did a base substitution occur after a region was duplicated, thus it is only in one copy or did it occur before the duplication, thus altering both copies? Did a base substitution happen before a deletion, hiding a mutation that should be included in any phylogenetic inference? When this attributes is present, mutations will be applied in order according to their genomic positions.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>within</strong>=<em>&lt;mutation_id&gt;</em>or <strong>within</strong>=<em>&lt;mutation_id&gt;:&lt;insert_position&gt;</em> or <strong>within</strong>=<em>&lt;mutation_id&gt;:&lt;copy_index&gt;</em></p>
+<blockquote>
+<div><p>This mutation happens within a different mutation. These options can specify, for example, that a base substitution happens in the second copy of a duplicated region. If <em>&lt;mutation_id&gt;</em> refers to an AMP, then it must be of the form <em>&lt;mutation_id&gt;:&lt;copy_index&gt;</em> and the mutation is placed in the corresponding copy of the specified coordinates. If <em>&lt;mutation_id&gt;</em> refers to an INS, then it must be of the form <em>&lt;mutation_id&gt;:&lt;insert_position&gt;</em>, and the &lt;insert_position&gt; of the mutation will be interpreted as happening within the INS bases that are inserted, so that it can change those new bases. This coordinate is local to the new bases, so an &lt;insert_position&gt; of 1 refers to the first inserted base. In this case the main <em>&lt;position&gt;</em> of the  mutation must be the same as the <em>&lt;position&gt; of the INS that it is within. If *&lt;mutation_id&gt;</em> refers to a MOB with no <em>&lt;copy_index&gt;</em>, then the mutation is placed within the newly inserted sequence of the mobile element with the position of the mutation interpreted as happening on the new genome after the MOB bases are inserted. If it refers to a MOB and is of the form <em>&lt;mutation_id&gt;:&lt;copy_index&gt;</em>, then the mutation is placed within the specified copy of the target site duplication.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>deleted</strong>=<em>1</em></p>
+<blockquote>
+<div><p>The sequence change caused by this mutation was made irrelevant by subsequent mutations that deleted or further changed the affected region. Annotation of this mutation in the given genome was inferred based on phylogeny. It will not be applied when generating the mutated genome.</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="evidence-types">
+<h3>Evidence Types<a class="headerlink" href="#evidence-types" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="ra-read-alignment-evidence">
+<h4>RA: Read alignment evidence<a class="headerlink" href="#ra-read-alignment-evidence" title="Permalink to this headline">¶</a></h4>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment.</p>
+</li>
+<li><p class="first"><strong>insert_position</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases inserted after the reference position to get to this base. An value of zero refers to the base. A value of 5 means that this evidence if for the fifth newly inserted column after the reference position.</p>
+</li>
+<li><p class="first"><strong>ref_base</strong> <em>&lt;char&gt;</em></p>
+<p>base in the reference genome.</p>
+</li>
+<li><p class="first"><strong>new_base</strong> <em>&lt;char&gt;</em></p>
+<p>new base supported by read alignment evidence.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="mc-missing-coverage-evidence">
+<h4>MC: Missing coverage evidence<a class="headerlink" href="#mc-missing-coverage-evidence" title="Permalink to this headline">¶</a></h4>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>start</strong> <em>&lt;uint32&gt;</em></p>
+<p>start position in reference sequence fragment.</p>
+</li>
+<li><p class="first"><strong>end</strong> <em>&lt;uint32&gt;</em></p>
+<p>end position in reference sequence of region.</p>
+</li>
+<li><p class="first"><strong>start_range</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases to offset <em>after</em> the <strong>start position</strong> to define the upper limit of the range where the start of a deletion could be.</p>
+</li>
+<li><p class="first"><strong>end_range</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases to offset <em>before</em> the <strong>end position</strong> to define the lower limit of the range where the start of a deletion could be.</p>
+</li>
+</ol>
+<p>Essentially this is evidence of missing coverage between two positions in the ranges [start, start+start_range] [end-end_range, end].</p>
+</div>
+<div class="section" id="jc-new-junction-evidence">
+<h4>JC: New junction evidence<a class="headerlink" href="#jc-new-junction-evidence" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>side_1_seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing side 1 of the junction.</p>
+</li>
+<li><p class="first"><strong>side_1_position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position of side 1 at the junction boundary.</p>
+</li>
+<li><p class="first"><strong>side_1_strand</strong> <em>&lt;1/-1&gt;</em></p>
+<p>direction that side 1 continues matching the reference sequence</p>
+</li>
+<li><p class="first"><strong>side_2_seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing side 2 of the junction.</p>
+</li>
+<li><p class="first"><strong>side_2_position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position of side 2 at the junction boundary.</p>
+</li>
+<li><p class="first"><strong>side_2_strand</strong> <em>&lt;1/-1&gt;</em></p>
+<p>direction that side 2 continues matching the reference sequence.</p>
+</li>
+</ol>
+<ol class="arabic" start="9">
+<li><p class="first"><strong>overlap</strong> <em>&lt;uint32&gt;</em></p>
+<p>Number of bases that the two sides of the new junction have in common.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="un-unknown-base-evidence">
+<h4>UN: Unknown base evidence<a class="headerlink" href="#un-unknown-base-evidence" title="Permalink to this headline">¶</a></h4>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>start</strong> <em>&lt;uint32&gt;</em></p>
+<p>start position in reference sequence of region.</p>
+</li>
+<li><p class="first"><strong>end</strong> <em>&lt;uint32&gt;</em></p>
+<p>end position in reference sequence of region.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="validation-types">
+<h3>Validation Types<a class="headerlink" href="#validation-types" title="Permalink to this headline">¶</a></h3>
+<p>These items indicate that mutations have been validated by further, targeted experiments.</p>
+<div class="section" id="cura-true-positive-curated-by-an-expert">
+<h4>CURA: True-positive curated by an expert<a class="headerlink" href="#cura-true-positive-curated-by-an-expert" title="Permalink to this headline">¶</a></h4>
+<p>An expert has examined the data output from a prediction program and determined that this mutations is a true positive.</p>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>expert</strong> <em>&lt;string&gt;</em></p>
+<p>Name or initials of the person who predicted the mutation.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="fpos-false-positive-curated-by-an-expert">
+<h4>FPOS: False-positive curated by an expert<a class="headerlink" href="#fpos-false-positive-curated-by-an-expert" title="Permalink to this headline">¶</a></h4>
+<p>An expert has examined the raw read data and determined that this predicted mutation is a false positive.</p>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>expert</strong> <em>&lt;string&gt;</em></p>
+<p>Name or initials of the person who predicted the mutation.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="phyl-phylogenetic-comparison">
+<h4>PHYL: Phylogenetic comparison<a class="headerlink" href="#phyl-phylogenetic-comparison" title="Permalink to this headline">¶</a></h4>
+<p>This validation was transferred from validation in another, related genome.</p>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>gd</strong> <em>&lt;string&gt;</em></p>
+<p>Name of the genome_diff file containing the evidence.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="tseq-targeted-re-sequencing">
+<h4>TSEQ: Targeted re-sequencing<a class="headerlink" href="#tseq-targeted-re-sequencing" title="Permalink to this headline">¶</a></h4>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>primer1_start</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 5&#8217; end of primer 1.</p>
+</li>
+<li><p class="first"><strong>primer1_end</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 3&#8217; end of primer 1.</p>
+</li>
+<li><p class="first"><strong>primer2_start</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 5&#8217; end of primer 2.</p>
+</li>
+<li><p class="first"><strong>primer2_end</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 3&#8217; end of primer 2.</p>
+</li>
+</ol>
+<p>For primer 1, start &lt; end. For primer 2, end &lt; start.</p>
+</div>
+<div class="section" id="pflp-pcr-fragment-length-polymorphism">
+<h4>PFLP: PCR-fragment length polymorphism<a class="headerlink" href="#pflp-pcr-fragment-length-polymorphism" title="Permalink to this headline">¶</a></h4>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>primer1_start</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 5&#8217; end of primer 1.</p>
+</li>
+<li><p class="first"><strong>primer1_end</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 3&#8217; end of primer 1.</p>
+</li>
+<li><p class="first"><strong>primer2_start</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 5&#8217; end of primer 2.</p>
+</li>
+<li><p class="first"><strong>primer2_end</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 3&#8217; end of primer 2.</p>
+</li>
+</ol>
+<p>For primer 1, start &lt; end. For primer 2, end &lt; start.</p>
+</div>
+<div class="section" id="rflp-restriction-fragment-length-polymorphism">
+<h4>RFLP: Restriction fragment length polymorphism<a class="headerlink" href="#rflp-restriction-fragment-length-polymorphism" title="Permalink to this headline">¶</a></h4>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>primer1_start</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 5&#8217; end of primer 1.</p>
+</li>
+<li><p class="first"><strong>primer1_end</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 3&#8217; end of primer 1.</p>
+</li>
+<li><p class="first"><strong>primer2_start</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 5&#8217; end of primer 2.</p>
+</li>
+<li><p class="first"><strong>primer2_end</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence of the 3&#8217; end of primer 2.</p>
+</li>
+<li><p class="first"><strong>enzyme</strong> <em>&lt;string&gt;</em></p>
+<p>Restriction enzyme used to distinguish reference from mutated allele.</p>
+</li>
+</ol>
+<p>For primer 1, start &lt; end. For primer 2, end &lt; start.</p>
+</div>
+<div class="section" id="pfge-pulsed-field-gel-electrophoresis">
+<h4>PFGE: Pulsed-field gel electrophoresis<a class="headerlink" href="#pfge-pulsed-field-gel-electrophoresis" title="Permalink to this headline">¶</a></h4>
+<p>Changes in fragment sizes of genomic DNA digested with restriction enzymes and separated by pulsed-field</p>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>restriction enzyme</strong> <em>&lt;string&gt;</em></p>
+</li>
+</ol>
+<blockquote>
+<div>Restriction enzyme used to digest genomic DNA and observe fragments.</div></blockquote>
+</div>
+<div class="section" id="note-note">
+<h4>NOTE: Note<a class="headerlink" href="#note-note" title="Permalink to this headline">¶</a></h4>
+<p>Generic container for a note about a mutation prediction</p>
+<p>Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>note</strong> <em>&lt;string&gt;</em></p>
+<p>Free text note.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="mask-repeat-mask-a-section">
+<h4>MASK: Repeat mask a section<a class="headerlink" href="#mask-repeat-mask-a-section" title="Permalink to this headline">¶</a></h4>
+<p>Artificially mask a section of DNA as &#8220;N&#8221;s. This is useful for creating modified reference sequences, particularly for targeted sequencing approaches.
+Line specification:</p>
+<ol class="arabic" start="4">
+<li><p class="first"><strong>seq_id</strong> <em>&lt;string&gt;</em></p>
+<p>id of reference sequence fragment containing mutation, evidence, or validation.</p>
+</li>
+<li><p class="first"><strong>position</strong> <em>&lt;uint32&gt;</em></p>
+<p>position in reference sequence fragment.</p>
+</li>
+<li><p class="first"><strong>size</strong> <em>&lt;uint32&gt;</em></p>
+<p>number of bases masked to &#8220;N&#8221; in reference, including reference position.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong class="program">GenomeDiff</strong> Format</a><ul>
+<li><a class="reference internal" href="#format-specification">Format specification</a><ul>
+<li><a class="reference internal" href="#version-line">Version line</a></li>
+<li><a class="reference internal" href="#metadata-lines">Metadata lines</a></li>
+<li><a class="reference internal" href="#comment-lines">Comment lines</a></li>
+<li><a class="reference internal" href="#data-lines">Data lines</a></li>
+<li><a class="reference internal" href="#mutational-event-types">Mutational Event Types</a><ul>
+<li><a class="reference internal" href="#snp-base-substitution-mutation">SNP: Base substitution mutation</a></li>
+<li><a class="reference internal" href="#sub-multiple-base-substitution-mutation">SUB: Multiple base substitution mutation</a></li>
+<li><a class="reference internal" href="#del-deletion-mutation">DEL: Deletion mutation</a><ul>
+<li><a class="reference internal" href="#additional-del-named-fields">Additional DEL named fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ins-insertion-mutation">INS: Insertion mutation</a><ul>
+<li><a class="reference internal" href="#additional-ins-named-fields">Additional INS named fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mob-mobile-element-insertion-mutation">MOB: Mobile element insertion mutation</a><ul>
+<li><a class="reference internal" href="#additional-mob-named-fields">Additional MOB named fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#amp-amplification-mutation">AMP: Amplification mutation</a><ul>
+<li><a class="reference internal" href="#additional-amp-named-fields">Additional AMP named fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#con-gene-conversion-mutation">CON: Gene conversion mutation</a></li>
+<li><a class="reference internal" href="#inv-inversion-mutation">INV: Inversion mutation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#standard-name-value-pairs">Standard name=value pairs</a><ul>
+<li><a class="reference internal" href="#counting-mutations">Counting Mutations</a></li>
+<li><a class="reference internal" href="#applying-mutations">Applying Mutations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#evidence-types">Evidence Types</a><ul>
+<li><a class="reference internal" href="#ra-read-alignment-evidence">RA: Read alignment evidence</a></li>
+<li><a class="reference internal" href="#mc-missing-coverage-evidence">MC: Missing coverage evidence</a></li>
+<li><a class="reference internal" href="#jc-new-junction-evidence">JC: New junction evidence</a></li>
+<li><a class="reference internal" href="#un-unknown-base-evidence">UN: Unknown base evidence</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#validation-types">Validation Types</a><ul>
+<li><a class="reference internal" href="#cura-true-positive-curated-by-an-expert">CURA: True-positive curated by an expert</a></li>
+<li><a class="reference internal" href="#fpos-false-positive-curated-by-an-expert">FPOS: False-positive curated by an expert</a></li>
+<li><a class="reference internal" href="#phyl-phylogenetic-comparison">PHYL: Phylogenetic comparison</a></li>
+<li><a class="reference internal" href="#tseq-targeted-re-sequencing">TSEQ: Targeted re-sequencing</a></li>
+<li><a class="reference internal" href="#pflp-pcr-fragment-length-polymorphism">PFLP: PCR-fragment length polymorphism</a></li>
+<li><a class="reference internal" href="#rflp-restriction-fragment-length-polymorphism">RFLP: Restriction fragment length polymorphism</a></li>
+<li><a class="reference internal" href="#pfge-pulsed-field-gel-electrophoresis">PFGE: Pulsed-field gel electrophoresis</a></li>
+<li><a class="reference internal" href="#note-note">NOTE: Note</a></li>
+<li><a class="reference internal" href="#mask-repeat-mask-a-section">MASK: Repeat mask a section</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gd_usage.html"
+                        title="previous chapter"><strong class="program">gdtools</strong> Utility Program</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/gd_format.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="gd_usage.html" title="gdtools Utility Program"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

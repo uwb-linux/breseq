@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial: Population Samples (Polymorphism Mode) &mdash; breseq 0.33.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.33.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="breseq 0.33.2 documentation" href="index.html" />
+    <link rel="next" title="Tutorial: Ultra-rare variant detection using consensus reads and targeted sequencing" href="tutorial_barcoded_targeted.html" />
+    <link rel="prev" title="Tutorial: Clonal Samples (Consensus Mode)" href="tutorial_clones.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_barcoded_targeted.html" title="Tutorial: Ultra-rare variant detection using consensus reads and targeted sequencing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_clones.html" title="Tutorial: Clonal Samples (Consensus Mode)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tutorial-population-samples-polymorphism-mode">
+<span id="tutorial-populations"></span><h1>Tutorial: Population Samples (Polymorphism Mode)<a class="headerlink" href="#tutorial-population-samples-polymorphism-mode" title="Permalink to this headline">¶</a></h1>
+<p>In this exercise, you will analyze two population (metagenomic) samples using <strong class="program">breseq</strong> to track the frequencies of evolved alleles and changes in genetic diversity in population Ara-3 of the Lenski long-term evolution experiment (LTEE). As discussed in <a class="reference internal" href="tutorial_clones.html#tutorial-clones"><span>Tutorial: Clonal Samples (Consensus Mode)</span></a> this population evolved citrate utilization after 31,500 generations.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This tutorial was created for the EMBO Practical Course <a class="reference external" href="http://events.embo.org/15-htp-sequencing/">Measuring intra-species diversity using high-throughput sequencing</a> held 27–31 July 2015 in Oeras, Portugal.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If you encounter any <strong class="program">breseq</strong> or <strong class="program">gdtools</strong> errors or crashes in running this tutorial, please <a class="reference external" href="https://github.com/barricklab/breseq/issues">report issues on GitHub</a>.</p>
+</div>
+<div class="section" id="download-data-files">
+<h2>1. Download data files<a class="headerlink" href="#download-data-files" title="Permalink to this headline">¶</a></h2>
+<p>First, create a directory called <strong>tutorial_populations</strong>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>mkdir tutorial_populations
+<span class="nv">$ </span><span class="nb">cd </span>tutorial_populations
+</pre></div>
+</div>
+<div class="section" id="reference-sequence">
+<h3>Reference sequence<a class="headerlink" href="#reference-sequence" title="Permalink to this headline">¶</a></h3>
+<p><strong class="program">breseq</strong> prefers the reference sequence in Genbank or GFF3 format. In this example, the reference sequence is the ancestral <em>Escherichia coli</em> B strain REL606. For this tutorial, we are going to use an updated version of the GenBank genome record (accession:<strong>NC_012967</strong>) that contains richer gene annotation information than the version available from NCBI.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://barricklab.org/release/breseq_tutorial/REL606.gbk.gz">Download REL606.gbk via this link</a></li>
+</ul>
+</div>
+<div class="section" id="read-files">
+<h3>Read files<a class="headerlink" href="#read-files" title="Permalink to this headline">¶</a></h3>
+<p>We&#8217;re going to use Illumina genome re-sequencing data from mixed populations that evolved for up to 40,000 generations in a long-term evolution experiment <a class="reference internal" href="references.html#blount2008" id="id1">[Blount2008]</a> <a class="reference internal" href="references.html#blount2011" id="id2">[Blount2011]</a>. This data is available in the European Nucleotide Archive (ENA). Go to <a class="reference external" href="http://www.ebi.ac.uk/">http://www.ebi.ac.uk/</a> and search for the accession number: <strong>SRR1721884</strong>. Then click on the accession number to open the record and download the two FASTQ files using the links in the &#8216;ftp&#8217; column.</p>
+<p>This particular sample was taken at 20,000 generations from population Ara-3. You&#8217;ll use it to illustrate running <strong class="program">breseq</strong> in polymorphism mode and the consequences of different filtering options for ruling out false-positives. If you would like to access the entire time-series of population samples from this population check out <a class="reference external" href="http://www.ebi.ac.uk/ena/data/view/SRP051254">SRP051254</a>.</p>
+</div>
+</div>
+<div class="section" id="run-breseq-with-default-filters">
+<h2>2. Run <strong class="program">breseq</strong> with default filters<a class="headerlink" href="#run-breseq-with-default-filters" title="Permalink to this headline">¶</a></h2>
+<p>Check to be sure that you have changed into the <strong>tutorial_clonal_samples</strong> directory and that you have all of the input files (and have uncompressed them).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>ls
+NC_012967.gbk   SRR030257_1.fastq   SRR030257_2.fastq
+</pre></div>
+</div>
+<p>Now, run <strong class="program">breseq</strong> using this command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>breseq -j <span class="m">8</span> -p -o REL8595M-default -r REL606.gbk SRR030257_1.fastq SRR030257_2.fastq
+</pre></div>
+</div>
+<p>This command is expected to take roughly 30 minutes to an hour to complete.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are unable to complete this command, please download the <a class="reference external" href="http://barricklab.org/release/breseq_tutorial/REL8595M-default.tgz">output for REL8595M-default</a> to continue the tutorial.</p>
+</div>
+<p>Open <code class="docutils literal"><span class="pre">REL8595M-default/output/index.html</span></code>. Examine the mutation lines that are highlighted in green, which are predicted to be polymorphic in the mixed population sample (the predicted allele has an estimated maximum likelihood frequency between 0% and 100%). Click on some of the <strong>RA</strong> and <strong>JC</strong> links for these items. How are they different from those that you observed when <strong class="program">breseq</strong> was run in consensus mode on a clone?</p>
+</div>
+<div class="section" id="run-breseq-with-no-filters">
+<h2>3. Run <strong class="program">breseq</strong> with no filters<a class="headerlink" href="#run-breseq-with-no-filters" title="Permalink to this headline">¶</a></h2>
+<p>Predicting polymorphisms is very prone to false-positives (wrongly predicting genetic variation that is not actually present in a sample). This is, in part, because sequencing data has hotspots and biases that are difficult to adequately capture in a statistical error model (particularly when analyzing only one sample at a time, like in this example). <strong class="program">breseq</strong> has some default options that can be used to filter out variant predictions that look suspicious because of certain biases that they exhibit with respect to how reads align to them versus how they typically align to &#8220;normal&#8221; positions in the genome.</p>
+<p>In consensus mode, <strong class="program">breseq</strong> results are generally robust to different sequencing coverage depths and types of samples. In polymorphism mode, <strong class="program">breseq</strong> often needs some tuning of parameters and statistical cutoffs depending on characteristics of the input data set in order to not predict either too many (false-positives) or too few (false-negatives) polymorphisms. In addition, it may be necessary to perform more complex analyses of multiple samples or of time courses to gain extra power for discriminating true polymorphisms from errors. Unfortunately, these approaches are outside the scope of a simple <strong class="program">breseq</strong> command!</p>
+<p>Bring up the full <strong class="program">breseq</strong> help:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>breseq -h
+</pre></div>
+</div>
+<p>The relevant options are listed under <strong>Polymorphism (Mixed Population) Options</strong>. Now, we&#8217;re going to do a <strong class="program">breseq</strong> run in which we disable all of the filters for comparison to the initial run:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>breseq -j <span class="m">8</span> -p --polymorphism-reject-indel-homopolymer-length <span class="m">0</span> --polymorphism-reject-surrounding-homopolymer-length <span class="m">0</span> --polymorphism-bias-cutoff <span class="m">0</span> --polymorphism-minimum-coverage-each-strand <span class="m">0</span> -o REL8595M-no-filters -r REL606.gbk SRR030257_1.fastq SRR030257_2.fastq
+</pre></div>
+</div>
+<p>This command is expected to take roughly 30 minutes to an hour to complete.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are unable to complete this command, please download the <a class="reference external" href="http://barricklab.org/release/breseq_tutorial/REL8595M-no-filters.tgz">output for REL8595M-no-filters</a> to continue the tutorial.</p>
+</div>
+</div>
+<div class="section" id="compare-predictions-of-mutations">
+<h2>4. Compare predictions of mutations<a class="headerlink" href="#compare-predictions-of-mutations" title="Permalink to this headline">¶</a></h2>
+<p>Open <code class="docutils literal"><span class="pre">no-filters/output/index.html</span></code>. See if you can find examples of mutations that are probably due to different types of sequencing biases by delving into the original <strong class="program">breseq</strong> HTML files that show the read alignments (RA).</p>
+<p>You might first want to create a comparison table of the results from the two <strong class="program">breseq</strong> runs.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>cp REL8595M-default/output/output.gd default.gd
+<span class="nv">$ </span>cp REL8595M-no-filters/output/output.gd no-filters.gd
+<span class="nv">$ </span>gdtools COMPARE -o compare.html -r REL606.gbk default.gd no-filters.gd
+</pre></div>
+</div>
+<p>Can you find any predictions that look like plausible mutations that were incorrectly rejected by the default filters?</p>
+<div class="toggle container">
+<div class="header container">
+<strong>Hint</strong></div>
+<div class="text container">
+Look for mutations with intermediate predicted frequencies (closest to 50%).</div>
+</div>
+</div>
+<div class="section" id="examine-allele-frequency-time-courses">
+<h2>5. Examine allele frequency time courses<a class="headerlink" href="#examine-allele-frequency-time-courses" title="Permalink to this headline">¶</a></h2>
+<p>Since it would take a long time to create results for all of the mixed population samples, download these <strong class="program">GenomeDiff</strong> output files pre-generated with <strong class="program">breseq</strong> using the default polymorphism filtering options in order to continue the tutorial:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://barricklab.org/release/breseq_tutorial/population_gd.tgz">Download population_gd</a></li>
+</ul>
+<p>If you look at these files, you will also notice that metadata (experiment, population, generation) has been added to these files that enables them to be properly sorted into order.</p>
+<p>Make a compare table for all of these files.</p>
+<div class="toggle container">
+<div class="header container">
+<strong>Show me the commands</strong></div>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>population_gd
+<span class="nv">$ </span>gdtools COMPARE -r ../REL606.gbk -o ../time-course.html <span class="sb">`</span>ls *.gd<span class="sb">`</span>
+</pre></div>
+</div>
+</div>
+<p>Open the HTML output file and look at the trajectories of mutations that appear early and later.</p>
+<p>Here are a few questions to get you started thinking about the data:</p>
+<ol class="arabic simple">
+<li>What do you notice about the last sample, REL11151 (45,000 generations)? It&#8217;s located furthest to the right.</li>
+</ol>
+<div class="toggle container">
+<div class="header container">
+<strong>See the answer</strong></div>
+<div class="text container">
+It has many, many, many more predicted mutations than the other samples. This type of result could potentially be due to some pathological characteristic of that particular sequencing dataset. However, in this case it is actually because the population evolved an elevated mutation rate by 36,000 generations which led to an explosion of genetic diversity in the population by 45,000 generations.</div>
+</div>
+<ol class="arabic simple" start="2">
+<li>What other potential problems do you notice with the output?</li>
+</ol>
+<div class="toggle container">
+<div class="header container">
+<strong>For example</strong></div>
+<div class="text container">
+<p>Some mutations may &#8220;blink in and out of existence&#8221; (be present at one time point and then disappear at later time points only to reappear later). In some cases, this represents actual population dynamics: that lineage may have been close to extinction and then experienced a resurgence as it accumulated additional beneficial mutations. In many cases, however, we know that this is impossible because it does not happen to linked mutations that are present in the same evolved lineage. This type of error is due to improperly rejecting evidence for a polymorphism in one or a few samples.</p>
+<p>One solution to this problem is to adjust the <strong class="program">breseq</strong> options for filtering polymorphism predictions, but this is unlikely to give a clean result for any setting. A second solution is to compile a list of evidence that you force <strong class="program">breseq</strong> to always look at and predict the frequency of using the <strong>&#8211;user-evidence-gd</strong> option. If you supply this option, then it will predict and record evidence for that RA or JC item even if it has a frequency of 0% because there are no variants supporting it in a given population sample.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/breseq.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tutorial: Population Samples (Polymorphism Mode)</a><ul>
+<li><a class="reference internal" href="#download-data-files">1. Download data files</a><ul>
+<li><a class="reference internal" href="#reference-sequence">Reference sequence</a></li>
+<li><a class="reference internal" href="#read-files">Read files</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#run-breseq-with-default-filters">2. Run <strong class="program">breseq</strong> with default filters</a></li>
+<li><a class="reference internal" href="#run-breseq-with-no-filters">3. Run <strong class="program">breseq</strong> with no filters</a></li>
+<li><a class="reference internal" href="#compare-predictions-of-mutations">4. Compare predictions of mutations</a></li>
+<li><a class="reference internal" href="#examine-allele-frequency-time-courses">5. Examine allele frequency time courses</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial_clones.html"
+                        title="previous chapter">Tutorial: Clonal Samples (Consensus Mode)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial_barcoded_targeted.html"
+                        title="next chapter">Tutorial: Ultra-rare variant detection using consensus reads and targeted sequencing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tutorial_populations.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_barcoded_targeted.html" title="Tutorial: Ultra-rare variant detection using consensus reads and targeted sequencing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_clones.html" title="Tutorial: Clonal Samples (Consensus Mode)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">breseq 0.33.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>
